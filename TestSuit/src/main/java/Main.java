@@ -24,6 +24,9 @@ public class Main {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        if(args.length < 2){
+            throw new IllegalArgumentException("Expected parameters : <source folder> and <dest folder>");
+        }
 
         //("/home/julien/Documents/TP/VV/DummyProject/src/test/java/");
 
