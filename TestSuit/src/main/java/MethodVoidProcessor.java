@@ -12,7 +12,7 @@ public class MethodVoidProcessor extends AbstractProcessor<CtClass> {
 
     @Override
     public void process(CtClass ctClass) {
-       Set ctMethods = ctClass.getAllMethods();
+       Set ctMethods = ctClass.getMethods();
 
        ctMethods.stream().filter(m -> ((CtMethod)m).getType().getSimpleName().equals("void") )
                .forEach(
