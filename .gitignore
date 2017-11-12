@@ -1,2 +1,4 @@
 .idea
 *.iml
+TestSuit/resources*
+TestSuit/target*
