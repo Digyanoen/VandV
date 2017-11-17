@@ -1,16 +1,22 @@
 import spoon.processing.AbstractProcessor;
 import spoon.reflect.code.BinaryOperatorKind;
 import spoon.reflect.code.CtBinaryOperator;
-import spoon.reflect.code.CtExpression;
 import spoon.reflect.code.CtIf;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtMethod;
-import spoon.support.reflect.code.CtExpressionImpl;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MethodChangeOperatorProcessor extends AbstractProcessor<CtClass> {
-    @Override
+
+    List<CtClass> ctClassList;
+
     public void process(CtClass ctClass) {
-        ctClass.getMethods().stream().forEach(m -> {
+        ctClassList = new ArrayList<>();
+        CtClass ctClassCloned = ctClass.clone();
+        ctClassList.add(ctClass);
+        ctClassCloned.getMethods().stream().forEach(m -> {
             ((CtMethod) m).getBody().getStatements().stream().filter(ctStatement -> ctStatement instanceof CtIf)
                     .forEach(
                             s -> {
@@ -20,37 +26,66 @@ public class MethodChangeOperatorProcessor extends AbstractProcessor<CtClass> {
                                 switch (binaryOperator){
                                     case AND:
                                         ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(BinaryOperatorKind.OR);
+                                        ctClassList.add(ctClassCloned.clone());
+                                         ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(BinaryOperatorKind.AND);
                                         break;
                                     case OR:
                                         ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(BinaryOperatorKind.AND);
+                                        ctClassList.add(ctClassCloned.clone());
+                                         ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(BinaryOperatorKind.OR);
                                         break;
                                     case EQ:
                                         ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(BinaryOperatorKind.NE);
+                                        ctClassList.add(ctClassCloned.clone());
+                                         ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(BinaryOperatorKind.EQ);
                                         break;
                                     case NE:
                                         ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(BinaryOperatorKind.EQ);
+                                        ctClassList.add(ctClassCloned.clone());
+                                         ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(BinaryOperatorKind.NE);
                                         break;
                                     case LE:
                                         ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(BinaryOperatorKind.GT);
+                                        ctClassList.add(ctClassCloned.clone());
+                                         ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(BinaryOperatorKind.LE);
                                         break;
                                     case GT:
                                         ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(BinaryOperatorKind.LE);
+                                        ctClassList.add(ctClassCloned.clone());
+                                         ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(BinaryOperatorKind.GT);
                                         break;
                                     case PLUS:
                                         ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(BinaryOperatorKind.MINUS);
+                                        ctClassList.add(ctClassCloned.clone());
+                                         ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(BinaryOperatorKind.PLUS);
                                         break;
                                     case MINUS:
                                         ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(BinaryOperatorKind.PLUS);
+                                        ctClassList.add(ctClassCloned.clone());
+                                         ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(BinaryOperatorKind.MINUS);
                                         break;
                                     case MUL:
                                         ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(BinaryOperatorKind.DIV);
+                                        ctClassList.add(ctClassCloned.clone());
+                                         ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(BinaryOperatorKind.MINUS);
                                         break;
                                     case DIV:
                                         ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(BinaryOperatorKind.MUL);
+                                        ctClassList.add(ctClassCloned.clone());
+                                         ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(BinaryOperatorKind.DIV);
                                         break;
 
                                 }
                             });
         });
+    }
+
+
+    public List<CtClass> getCtClassList() {
+        return ctClassList;
+    }
+
+    public void setCtClassList(List<CtClass> ctClassList) {
+        this.ctClassList = ctClassList;
     }
 }
