@@ -1,6 +1,9 @@
+package processor;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import processors.MethodVoidProcessor;
 import spoon.reflect.code.CtBlock;
 import spoon.reflect.code.CtReturn;
 import spoon.reflect.code.CtStatement;

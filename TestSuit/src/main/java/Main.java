@@ -1,6 +1,7 @@
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
+import processors.MethodChangeOperatorProcessor;
 import spoon.Launcher;
 import spoon.reflect.CtModel;
 import spoon.reflect.code.CtStatement;
@@ -39,7 +40,7 @@ public class Main {
 
         launcher.addInputResource(inDir.getPath());
         launcher.setSourceOutputDirectory(new File(args[1]));
-        launcher.addProcessor(new MyProcess());
+        //launcher.addProcessor(new MyProcess());
         launcher.buildModel();
         launcher.prettyprint();
        // launcher.run();
