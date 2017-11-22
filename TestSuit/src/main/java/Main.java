@@ -3,75 +3,68 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import processors.MethodChangeOperatorProcessor;
 import spoon.Launcher;
+import spoon.SpoonModelBuilder;
 import spoon.reflect.CtModel;
 import spoon.reflect.code.CtStatement;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtMethod;
+import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
+import spoon.reflect.factory.Factory;
 import spoon.reflect.visitor.filter.TypeFilter;
 
 import java.io.*;
+import java.util.List;
 
+import static javafx.application.Platform.exit;
 import static org.junit.Assert.assertTrue;
 
 public class Main {
+
     public static void main(String[] args){
 
-        try {
-            Process p = Runtime.getRuntime().exec("ls");
-            printLines("test", p.getInputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if(args.length < 2){
-            throw new IllegalArgumentException("Expected parameters : <source folder> and <dest folder>");
+        //Vérifie si nous avons les arguments nécessaire
+        if(args.length < 1){
+            throw new IllegalArgumentException("Expected parameters : <source folder>");
         }
 
-        //("/home/julien/Documents/TP/VV/DummyProject/src/test/java/");
-
-
+        //Initialise le launcher principal
         Launcher launcher = new Launcher();
         launcher.getEnvironment().setAutoImports(true);
         launcher.getEnvironment().setNoClasspath(true);
 
-        File inDir = new File(args[0]);
+        //Initialise le launcher des tests
+        Launcher testLauncher = new Launcher();
+        testLauncher.getEnvironment().setAutoImports(true);
+        testLauncher.getEnvironment().setNoClasspath(true);
 
+        //Récupère les dossiers de sources et de tests
+        File inDir = new File(args[0]+"/src/main/java");
+        File inTestDir = new File(args[0]+"/src/test/java");
+
+        //Ajoute les sources aux launchers et build les models
         launcher.addInputResource(inDir.getPath());
-        launcher.setSourceOutputDirectory(new File(args[1]));
-        //launcher.addProcessor(new MyProcess());
         launcher.buildModel();
-        launcher.prettyprint();
-       // launcher.run();
+
+        testLauncher.addInputResource(inTestDir.getPath());
+        testLauncher.buildModel();
+
+        //Récupère la liste des classes de test
+        List<CtType> testtypes = testLauncher.getModel().getElements(new TypeFilter<CtType>(CtType.class));
+        //Récupère le package source
+        CtPackage rootp = launcher.getModel().getRootPackage();
+        //Ajoute chaque classe dans le launcher principal
+        testtypes.forEach(ctType -> rootp.addType(ctType));
+
+        //Récupère la factory
+        Factory factory = launcher.getFactory();
+        //Crée un compiler spoon et compile
+        SpoonModelBuilder compiler = launcher.createCompiler(factory);
+        compiler.compile();
+
+
+
         CtModel root = launcher.getModel();
-
-        for (CtMethod<?> meth : root.getRootPackage().getElements(new TypeFilter<CtMethod>(CtMethod.class) {
-            @Override
-            public boolean matches(CtMethod element) {
-                return super.matches(element) && element.getAnnotation(Test.class) == null;
-            }
-        })) {
-            System.out.println("pouet "+meth.getType().getSimpleName());
-            meth.getBody().forEach((CtStatement ac) -> {
-                ac.getFactory();
-            });
-            //assertTrue("naming contract violated for "+meth.getParent(CtClass.class).getSimpleName(), meth.getParent(CtClass.class).getSimpleName().startsWith("Test") || meth.getParent(CtClass.class).getSimpleName().endsWith("Test"));
-        }
-
-        Result r = new JUnitCore().run();
-
-        root.getAllPackages().stream().forEach(
-                p->System.out.println("p: " + p.getQualifiedName())
-        );
-
-        System.out.println();
-
-        root.getAllTypes().stream().forEach(
-                s->System.out.println("s: " + s.getQualifiedName())
-        );
-
-
  //list all classes of the model
         for(CtType<?> s : root.getAllTypes()) {
             System.out.println("class: "+s.getQualifiedName());
