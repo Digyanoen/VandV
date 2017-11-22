@@ -75,6 +75,7 @@ public class MethodVoidProcessorTest{
     @Test
     public void removeBodyTest(){
         methodVoidProcessor.process(removeClass);
+        Assert.assertTrue("Class must be the same", methodVoidProcessor.getCtClasses().get(0).equals(removeClass));
         for (CtClass c : methodVoidProcessor.getCtClasses().subList(1, methodVoidProcessor.getCtClasses().size())){
             Assert.assertTrue("Body must be null", c.getMethod("removeBodyMethod").getBody() == null);
         }
