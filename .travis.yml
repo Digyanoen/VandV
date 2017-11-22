@@ -1,4 +1,5 @@
 language: java
 sudo: false
-script: 
+script:
+- cd TestSuit 
 - mvn clean verify
