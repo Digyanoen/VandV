@@ -12,21 +12,16 @@ import spoon.reflect.visitor.filter.TypeFilter;
 
 import java.io.*;
 
+import static javafx.application.Platform.exit;
 import static org.junit.Assert.assertTrue;
 
 public class Main {
+
     public static void main(String[] args){
 
-        try {
-            Process p = Runtime.getRuntime().exec("ls");
-            printLines("test", p.getInputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if(args.length < 2){
-            throw new IllegalArgumentException("Expected parameters : <source folder> and <dest folder>");
+        //Vérifie si nous avons les arguments nécessaire
+        if(args.length < 1){
+            throw new IllegalArgumentException("Expected parameters : <source folder>");
         }
 
         //("/home/julien/Documents/TP/VV/DummyProject/src/test/java/");
