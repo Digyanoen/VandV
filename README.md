@@ -11,4 +11,6 @@ Importer le projet dans un éditeur (IntelliJ ou eclipse)
 Le configurer afin de passer en paramètre le chemin du dossier cible
 Lancer le projet
 
+[![Build Status](https://travis-ci.org/Digyanoen/VandV.svg?branch=master)](https://travis-ci.org/Digyanoen/VandV)
+
 
