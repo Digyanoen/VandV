@@ -1,6 +1,7 @@
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
 import processors.MethodChangeOperatorProcessor;
 import spoon.Launcher;
 import spoon.SpoonModelBuilder;
@@ -14,6 +15,9 @@ import spoon.reflect.factory.Factory;
 import spoon.reflect.visitor.filter.TypeFilter;
 
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.List;
 
 import static javafx.application.Platform.exit;
@@ -54,7 +58,7 @@ public class Main {
         //Récupère le package source
         CtPackage rootp = launcher.getModel().getRootPackage();
         //Ajoute chaque classe dans le launcher principal
-        testtypes.forEach(ctType -> rootp.addType(ctType));
+        testtypes.forEach(rootp::addType);
 
         //Récupère la factory
         Factory factory = launcher.getFactory();
@@ -62,7 +66,39 @@ public class Main {
         SpoonModelBuilder compiler = launcher.createCompiler(factory);
         compiler.compile();
 
+        //Initialise JUnit pour l'exécution des tests
+        JUnitCore junit = new JUnitCore();
 
+        File classRoot = new File("./spooned-classes/");
+
+        //Initialise le ClassLoader
+        URLClassLoader classLoader = null;
+        try {
+            classLoader = URLClassLoader.newInstance(new URL[]{classRoot.toURI().toURL()});
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        //Lance les différents tests et supprime les tests échouant
+        //Pour chaque classe de test
+        for(CtType elm: testtypes) {
+
+            //Convertie le CtType et Class
+            Class<?> cls = null;
+            try {
+                cls = classLoader.loadClass(elm.getQualifiedName());
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            //Récupère la liste des tests qui ont échoués
+            List<Failure> methodsToJunk = junit.run(cls).getFailures();
+
+            //Pour chaque échec supprime le test du modèle
+            for (Failure junk : methodsToJunk) {
+                elm.removeMethod(elm.getMethod(junk.getDescription().getMethodName()));
+            }
+        }
 
         CtModel root = launcher.getModel();
  //list all classes of the model
