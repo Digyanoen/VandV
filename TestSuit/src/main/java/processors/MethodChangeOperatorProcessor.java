@@ -87,7 +87,4 @@ public class MethodChangeOperatorProcessor extends AbstractProcessor<CtClass> {
         return ctClassList;
     }
 
-    public void setCtClassList(List<CtClass> ctClassList) {
-        this.ctClassList = ctClassList;
-    }
 }

@@ -36,7 +36,4 @@ public class MethodVoidProcessor extends AbstractProcessor<CtClass> {
         return ctClasses;
     }
 
-    public void setCtClasses(List<CtClass> ctClasses) {
-        this.ctClasses = ctClasses;
-    }
 }
