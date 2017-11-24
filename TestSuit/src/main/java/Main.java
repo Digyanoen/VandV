@@ -1,14 +1,10 @@
-import org.junit.Test;
 import org.junit.runner.JUnitCore;
-import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
-import processors.MethodChangeOperatorProcessor;
+import processors.MethodChangeIfOperatorProcessor;
 import spoon.Launcher;
 import spoon.SpoonModelBuilder;
 import spoon.reflect.CtModel;
-import spoon.reflect.code.CtStatement;
 import spoon.reflect.declaration.CtClass;
-import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.factory.Factory;
@@ -20,7 +16,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
 
-import static javafx.application.Platform.exit;
 import static org.junit.Assert.assertTrue;
 
 public class Main {
@@ -105,7 +100,7 @@ public class Main {
         for(CtType<?> s : root.getAllTypes()) {
             System.out.println("class: "+s.getQualifiedName());
         }
-        MethodChangeOperatorProcessor classProc = new MethodChangeOperatorProcessor();
+        MethodChangeIfOperatorProcessor classProc = new MethodChangeIfOperatorProcessor();
         root.getAllTypes().stream().forEach(m -> {
                     classProc.process((CtClass) m);
                     System.out.println(m);
