@@ -1,4 +1,5 @@
 
+import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import spoon.Launcher;
@@ -15,8 +16,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
     Classe de test, ne pas tenir compte de la syntaxe, des problèmes d'optimisation,
@@ -65,34 +65,18 @@ public class EssaiJunit {
         launcher.getEnvironment().setAutoImports(true);
         launcher.getEnvironment().setNoClasspath(true);
 
-        Launcher testLauncher = new Launcher();
-        testLauncher.getEnvironment().setAutoImports(true);
-        testLauncher.getEnvironment().setNoClasspath(true);
-
-        File inDir = new File(args[0]+"/src/main/java");
-        File inTestDir = new File(args[0]+"/src/test/java");
+        File inDir = new File(args[0]);
 
         launcher.addInputResource(inDir.getPath());
         launcher.setSourceOutputDirectory(new File(args[1]));
         launcher.buildModel();
 
-
-        testLauncher.addInputResource(inTestDir.getPath());
-        testLauncher.buildModel();
-
         Factory fact = launcher.getFactory();
-
-        List<CtClass> testclazzes = testLauncher.getModel()
-                .getElements(new TypeFilter<CtClass>(CtClass.class));
-        List<CtType> testtypes = testLauncher.getModel()
-                .getElements(new TypeFilter<CtType>(CtType.class));
-
-        testtypes.forEach(ctType -> System.out.println("test : " + ctType.getSimpleName()));
+        List<CtType> testtypes = new ArrayList<CtType>();
 
         launcher.getModel().getElements(new TypeFilter<>(CtMethod.class)).forEach(ctMethod -> System.out.println("before : "+ctMethod.getSimpleName()));
         //launcher.getModel().getElements(new TypeFilter<CtClass>(CtClass.class)).addAll(testclazzes);
-        CtPackage rootp = launcher.getModel().getRootPackage();
-        testtypes.forEach(ctType -> rootp.addType(ctType));
+
         launcher.getModel().getElements(new TypeFilter<>(CtMethod.class)).forEach(ctMethod -> System.out.println("after : " +ctMethod.getSimpleName()));
 
         SpoonModelBuilder compiler = launcher.createCompiler(fact);
@@ -113,10 +97,21 @@ public class EssaiJunit {
 
         System.out.println("Avant suppression");
 
+        for (CtMethod<?> meth : launcher.getModel().getRootPackage().getElements(new TypeFilter<CtMethod>(CtMethod.class) {
+            @Override
+            public boolean matches(CtMethod element) {
+                return !(testtypes.contains((CtType)element.getParent())) && super.matches(element) && (element.getAnnotation(Test.class) != null);
+            }
+        })) {
+            testtypes.add((CtType)meth.getParent());
+        }
+
         for (CtClass c : fact.getModel().getElements(new TypeFilter<CtClass>(CtClass.class))) {
             c.getMethods().stream().forEach( m -> {System.out.println(((CtMethod) m).getSimpleName());});
             System.out.println(c.getSimpleName());
         }
+
+        System.out.println("Classe de test : " + testtypes);
 
         for(CtType elm: testtypes) {
 
