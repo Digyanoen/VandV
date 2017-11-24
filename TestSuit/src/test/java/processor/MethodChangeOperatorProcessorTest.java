@@ -80,7 +80,6 @@ public class MethodChangeOperatorProcessorTest {
             for (CtClass c : ctClassList) {
 
                 BinaryOperatorKind binary = ((CtBinaryOperator) ((CtIf) c.getMethod("changeAndMethod").getBody().getStatement(0)).getCondition()).getKind();
-                System.out.println(c);
                 Assert.assertTrue("Operator is " + binary + " expected " + binaryOperatorKind[i][j], binary == binaryOperatorKind[i][j]);
                 j++;
 
