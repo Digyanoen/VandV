@@ -14,6 +14,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertTrue;
@@ -32,28 +33,24 @@ public class Main {
         launcher.getEnvironment().setAutoImports(true);
         launcher.getEnvironment().setNoClasspath(true);
 
-        //Initialise le launcher des tests
-        Launcher testLauncher = new Launcher();
-        testLauncher.getEnvironment().setAutoImports(true);
-        testLauncher.getEnvironment().setNoClasspath(true);
-
         //Récupère les dossiers de sources et de tests
-        File inDir = new File(args[0]+"/src/main/java");
-        File inTestDir = new File(args[0]+"/src/test/java");
+        File inDir = new File(args[0]);
 
         //Ajoute les sources aux launchers et build les models
         launcher.addInputResource(inDir.getPath());
         launcher.buildModel();
 
-        testLauncher.addInputResource(inTestDir.getPath());
-        testLauncher.buildModel();
-
         //Récupère la liste des classes de test
-        List<CtType> testtypes = testLauncher.getModel().getElements(new TypeFilter<CtType>(CtType.class));
-        //Récupère le package source
-        CtPackage rootp = launcher.getModel().getRootPackage();
-        //Ajoute chaque classe dans le launcher principal
-        testtypes.forEach(rootp::addType);
+        List<CtType> testtypes = new ArrayList<CtType>();
+
+        for (CtMethod<?> meth : launcher.getModel().getRootPackage().getElements(new TypeFilter<CtMethod>(CtMethod.class) {
+            @Override
+            public boolean matches(CtMethod element) {
+                return !(testtypes.contains((CtType)element.getParent())) && super.matches(element) && (element.getAnnotation(Test.class) != null);
+            }
+        })) {
+            testtypes.add((CtType)meth.getParent());
+        }
 
         //Récupère la factory
         Factory factory = launcher.getFactory();
@@ -78,7 +75,7 @@ public class Main {
         //Pour chaque classe de test
         for(CtType elm: testtypes) {
 
-            //Convertie le CtType et Class
+            //Convertie le CtType en Class
             Class<?> cls = null;
             try {
                 cls = classLoader.loadClass(elm.getQualifiedName());
@@ -96,6 +93,7 @@ public class Main {
         }
 
         CtModel root = launcher.getModel();
+
  //list all classes of the model
         for(CtType<?> s : root.getAllTypes()) {
             System.out.println("class: "+s.getQualifiedName());
