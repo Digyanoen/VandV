@@ -36,7 +36,7 @@ public class MethodChangeOperatorProcessor extends AbstractProcessor<CtClass> {
                                     case MUL:
                                         ((CtBinaryOperator) ((CtLocalVariable) s).getAssignment()).setKind(BinaryOperatorKind.DIV);
                                         ctClassList.add(ctClassCloned.clone());
-                                        ((CtBinaryOperator) ((CtLocalVariable) s).getAssignment()).setKind(BinaryOperatorKind.MINUS);
+                                        ((CtBinaryOperator) ((CtLocalVariable) s).getAssignment()).setKind(BinaryOperatorKind.MUL);
                                         break;
                                     case DIV:
                                         ((CtBinaryOperator) ((CtLocalVariable) s).getAssignment()).setKind(BinaryOperatorKind.MUL);
@@ -45,7 +45,7 @@ public class MethodChangeOperatorProcessor extends AbstractProcessor<CtClass> {
                                         break;
                                     case MOD:((CtBinaryOperator) ((CtLocalVariable) s).getAssignment()).setKind(BinaryOperatorKind.MUL);
                                         ctClassList.add(ctClassCloned.clone());
-                                        ((CtBinaryOperator) ((CtLocalVariable) s).getAssignment()).setKind(BinaryOperatorKind.MUL);
+                                        ((CtBinaryOperator) ((CtLocalVariable) s).getAssignment()).setKind(BinaryOperatorKind.MOD);
                                         break;
 
                                 }
