@@ -99,20 +99,20 @@ public class Main {
 
         CtModel root = launcher.getModel();
 
- //list all classes of the model
-        for(CtType<?> s : root.getAllTypes()) {
-            System.out.println("class: "+s.getQualifiedName());
+        List<CtClass> clazzes = root.getElements(new TypeFilter<CtClass>(CtClass.class));
+
+        //list all classes of the model
+        for(CtClass c : clazzes) {
+            System.out.println("class: "+c.getQualifiedName());
         }
+
+        // Launch a mutator
         MethodChangeOperatorProcessor classProc = new MethodChangeOperatorProcessor();
-        root.getAllTypes().stream().forEach(m -> {
-                    classProc.process((CtClass) m);
+        clazzes.stream().forEach(m -> {
                     System.out.println(m);
+                    classProc.process(m);
                 }
         );
-
-
-
-        System.out.println("Hello World!");
     }
 
     private static void printLines(String name, InputStream ins) throws Exception {
@@ -139,6 +139,5 @@ public class Main {
 //            assertTrue("naming contract violated for "+meth.getParent(CtClass.class).getSimpleName(), meth.getParent(CtClass.class).getSimpleName().startsWith("Test") || meth.getParent(CtClass.class).getSimpleName().endsWith("Test"));
 //        }
 //    }
-
 
 }
