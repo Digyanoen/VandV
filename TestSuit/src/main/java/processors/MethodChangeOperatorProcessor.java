@@ -4,6 +4,7 @@ import spoon.processing.AbstractProcessor;
 import spoon.reflect.code.BinaryOperatorKind;
 import spoon.reflect.code.CtBinaryOperator;
 import spoon.reflect.code.CtIf;
+import spoon.reflect.code.CtLocalVariable;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtMethod;
 
@@ -19,51 +20,34 @@ public class MethodChangeOperatorProcessor extends AbstractProcessor<CtClass> {
         CtClass ctClassCloned = ctClass.clone();
         ctClassList.add(ctClass);
         ctClassCloned.getMethods().stream().forEach(m -> {
-            ((CtMethod) m).getBody().getStatements().stream().filter(ctStatement -> ctStatement instanceof CtIf)
+            ((CtMethod) m).getBody().getStatements().stream().filter(ctStatement -> ctStatement instanceof CtLocalVariable)
                     .forEach(
                             s -> {
 
-                                BinaryOperatorKind binaryOperator = ((CtBinaryOperator) ((CtIf) s).getCondition()).getKind();
-
-                                BinaryOperatorKind nouv;
+                                BinaryOperatorKind binaryOperator = ((CtBinaryOperator) ((CtLocalVariable) s).getAssignment()).getKind();
+                                BinaryOperatorKind newOp;
 
                                 switch (binaryOperator){
-                                    case AND:
-                                        nouv = BinaryOperatorKind.OR;
-                                        break;
-                                    case OR:
-                                        nouv = BinaryOperatorKind.AND;
-                                        break;
-                                    case EQ:
-                                        nouv = BinaryOperatorKind.NE;
-                                        break;
-                                    case NE:
-                                        nouv = BinaryOperatorKind.EQ;
-                                        break;
-                                    case LE:
-                                        nouv = BinaryOperatorKind.GT;
-                                        break;
-                                    case GT:
-                                        nouv = BinaryOperatorKind.LE;
-                                        break;
                                     case PLUS:
-                                        nouv = BinaryOperatorKind.MINUS;
+                                        newOp = BinaryOperatorKind.MINUS;
                                         break;
                                     case MINUS:
-                                        nouv = BinaryOperatorKind.PLUS;
+                                        newOp = BinaryOperatorKind.PLUS;
                                         break;
                                     case MUL:
-                                        nouv = BinaryOperatorKind.DIV;
+                                        newOp = BinaryOperatorKind.DIV;
                                         break;
                                     case DIV:
-                                        nouv = BinaryOperatorKind.MUL;
+                                    case MOD:
+                                        newOp = BinaryOperatorKind.MUL;
                                         break;
-                                    default: nouv = binaryOperator; // TODO trouver mieux
+                                    default: newOp = binaryOperator; // TODO trouver mieux
                                         break;
                                 }
-                                ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(nouv);
+                                ((CtBinaryOperator) ((CtLocalVariable) s).getAssignment()).setKind(newOp);
                                 ctClassList.add(ctClassCloned.clone());
-                                ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(binaryOperator);
+                                ((CtBinaryOperator) ((CtLocalVariable) s).getAssignment()).setKind(binaryOperator);
+
                             });
         });
     }

@@ -85,35 +85,6 @@ public class MethodChangeIfOperatorProcessorTest {
         }
     }
 
-
-    @Test
-    public void MethodChangeOperatorErrorTest() {
-        CtClass changeAnd = new CtClassImpl();
-        changeAnd.setSimpleName("ChangeAnd");
-        changeAnd.addModifier(ModifierKind.PUBLIC);
-        CtMethod ctMethod = new CtMethodImpl();
-        CtBlock ctBlock = new CtBlockImpl();
-        CtIf ctIf = new CtIfImpl();
-        CtStatement ctStatement1 = changeAnd.getFactory().createCodeSnippetStatement("System.out.println(\"test if\")");
-        CtStatement ctStatement2 = changeAnd.getFactory().createCodeSnippetStatement("System.out.println(\"test else\")");
-        CtBinaryOperatorImpl<Boolean> condition = new CtBinaryOperatorImpl<Boolean>();
-
-
-        ctIf.setThenStatement(ctStatement1);
-        ctIf.setElseStatement(ctStatement2);
-
-
-        ctBlock.addStatement(ctIf);
-        ctMethod.setSimpleName("changeAndMethod");
-        ctMethod.addModifier(ModifierKind.PUBLIC);
-
-        CtTypeReference ctTypeReference = new CtTypeReferenceImpl();
-        ctTypeReference.setSimpleName("void");
-        ctMethod.setType(ctTypeReference);
-
-        ctMethod.setBody(ctBlock);
-        changeAnd.addMethod(ctMethod);
-    }
 }
 
 
