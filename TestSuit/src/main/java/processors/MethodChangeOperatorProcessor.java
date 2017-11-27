@@ -52,7 +52,7 @@ public class MethodChangeOperatorProcessor extends AbstractProcessor<CtClass> {
 
                             });
 
-            Result.showResults();
+            //Result.showResults();
         });
     }
 

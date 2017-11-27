@@ -30,7 +30,7 @@ public class MethodVoidProcessor extends AbstractProcessor<CtClass> {
                            ctClasses.add(ctClassCloned.clone());
                            ((CtMethod) method).setBody(body);
 
-                           Result.showResults();
+                           //Result.showResults();
                        });
 
     }

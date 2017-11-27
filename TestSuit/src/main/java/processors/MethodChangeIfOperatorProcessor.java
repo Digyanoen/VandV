@@ -71,7 +71,7 @@ public class MethodChangeIfOperatorProcessor extends AbstractProcessor<CtClass> 
                                     ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(binaryOperator);
                                 }
 
-                                Result.showResults();
+                               // Result.showResults();
 
                             });
         });

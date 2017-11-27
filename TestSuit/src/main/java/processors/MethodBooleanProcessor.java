@@ -36,7 +36,7 @@ public class MethodBooleanProcessor extends AbstractProcessor<CtClass> {
             ctClassList.add(ctClassCloned.clone());
             ((CtMethod) m).setBody(body);
 
-            Result.showResults();
+            //Result.showResults();
         });
     }
 
