@@ -1,8 +1,13 @@
 package processor;
 
+import Testing.Result;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import processors.MethodChangeIfOperatorProcessor;
 import spoon.reflect.code.*;
 import spoon.reflect.declaration.CtClass;
@@ -15,7 +20,8 @@ import spoon.support.reflect.declaration.CtMethodImpl;
 import spoon.support.reflect.reference.CtTypeReferenceImpl;
 
 import java.util.*;
-
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(Result.class)
 public class MethodChangeIfOperatorProcessorTest {
 
     private MethodChangeIfOperatorProcessor methodChangeIfOperatorProcessor;
@@ -66,6 +72,9 @@ public class MethodChangeIfOperatorProcessorTest {
         ctMethod.setBody(ctBlock);
         changeAnd.addMethod(ctMethod);
 
+        PowerMockito.mockStatic(Result.class);
+        PowerMockito.doNothing().when(Result.class);
+
         for (int i = 0; i < binaryOperatorKind.length; i++) {
             int j = 0;
             condition.setKind(binaryOperatorKind[i][0]);
@@ -110,6 +119,9 @@ public class MethodChangeIfOperatorProcessorTest {
 
         ctMethod.setBody(ctBlock);
         changeAnd.addMethod(ctMethod);
+
+        PowerMockito.mockStatic(Result.class);
+        PowerMockito.doNothing().when(Result.class);
 
         methodChangeIfOperatorProcessor.process(changeAnd);
         for(CtClass c : methodChangeIfOperatorProcessor.getCtClassList()){

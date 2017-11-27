@@ -1,10 +1,15 @@
 package processor;
 
+import Testing.Result;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import processors.MethodVoidProcessor;
 import spoon.reflect.code.CtBlock;
 import spoon.reflect.code.CtReturn;
@@ -23,6 +28,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(Result.class)
 public class MethodVoidProcessorTest{
 
 
@@ -74,6 +81,9 @@ public class MethodVoidProcessorTest{
 
     @Test
     public void removeBodyTest(){
+
+        PowerMockito.mockStatic(Result.class);
+        PowerMockito.doNothing().when(Result.class);
         methodVoidProcessor.process(removeClass);
         Assert.assertTrue("Class must be the same", methodVoidProcessor.getCtClasses().get(0).equals(removeClass));
         for (CtClass c : methodVoidProcessor.getCtClasses().subList(1, methodVoidProcessor.getCtClasses().size())){
@@ -85,6 +95,8 @@ public class MethodVoidProcessorTest{
     @Test
     public void bodyNotRemovedTest() {
 
+        PowerMockito.mockStatic(Result.class);
+        PowerMockito.doNothing().when(Result.class);
         methodVoidProcessor.process(removeClass);
         for (CtClass c : methodVoidProcessor.getCtClasses()) {
             Assert.assertTrue("Body must not be null", c.getMethod("bodyNotRemovedMethod").getBody() != null);

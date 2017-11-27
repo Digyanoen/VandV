@@ -6,9 +6,14 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import processors.MethodBooleanProcessor;
 import spoon.Launcher;
 import spoon.reflect.code.*;
@@ -20,6 +25,9 @@ import spoon.support.reflect.declaration.CtClassImpl;
 import spoon.support.reflect.declaration.CtMethodImpl;
 import spoon.support.reflect.reference.CtTypeReferenceImpl;
 
+
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(Result.class)
 public class MethodBooleanProcessorTest {
 
 
@@ -63,6 +71,7 @@ public class MethodBooleanProcessorTest {
         launcher = new Launcher();
         TestUnitHandler.initialize(launcher);
 
+
     }
 
     
@@ -71,6 +80,8 @@ public class MethodBooleanProcessorTest {
     @Test
     public void processBooleanTest(){
         launcher.addProcessor(methodBooleanProcessor);
+        PowerMockito.mockStatic(Result.class);
+        PowerMockito.doNothing().when(Result.class);
 
         methodBooleanProcessor.process(booleanClass);
 

@@ -1,8 +1,13 @@
 package processor;
 
+import Testing.Result;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import processors.MethodChangeIfOperatorProcessor;
 import processors.MethodChangeOperatorProcessor;
 import spoon.reflect.code.*;
@@ -17,6 +22,8 @@ import spoon.support.reflect.reference.CtTypeReferenceImpl;
 
 import java.util.List;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(Result.class)
 public class MethodChangeOperatorProcessorTest {
 
     private MethodChangeOperatorProcessor methodChangeOperatorProcessor;
@@ -66,6 +73,8 @@ public class MethodChangeOperatorProcessorTest {
 
         ctMethod.setBody(ctBlock);
         changeOp.addMethod(ctMethod);
+        PowerMockito.mockStatic(Result.class);
+        PowerMockito.doNothing().when(Result.class);
 
         for (int i = 0; i < binaryOperatorKind.length; i++) {
             int j = 0;
