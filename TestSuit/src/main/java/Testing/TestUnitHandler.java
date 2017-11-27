@@ -57,7 +57,7 @@ public class TestUnitHandler {
     }
 
     /**
-     * Initialise le tout //TODO Revoir la javadoc de TestUnitHandler.intialize
+     * Initialise le handler, à savoir le JUnitCore, le compiler Spoon et la liste des tests présents dans le modèle
      * @param launcher launcher contenant le modèle du projet à tester
      */
     public static void initialize(Launcher launcher){
@@ -81,7 +81,7 @@ public class TestUnitHandler {
 
     /**
      * Récupère les tests du modèle
-     * @return
+     * @return La liste de tests
      */
     public static List<CtType> getTests() {
         return tests;
