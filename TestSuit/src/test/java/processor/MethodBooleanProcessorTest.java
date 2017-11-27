@@ -1,9 +1,16 @@
 package processor;
 
+import Testing.Result;
+import Testing.TestUnitHandler;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import processors.MethodBooleanProcessor;
+import spoon.Launcher;
 import spoon.reflect.code.*;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtMethod;
@@ -15,9 +22,12 @@ import spoon.support.reflect.reference.CtTypeReferenceImpl;
 
 public class MethodBooleanProcessorTest {
 
+
     private static MethodBooleanProcessor methodBooleanProcessor;
 
     private static CtClass booleanClass;
+
+    private static Launcher launcher;
 
     @BeforeClass
     public static void setup(){
@@ -50,11 +60,17 @@ public class MethodBooleanProcessorTest {
         booleanMethod.setType(new CtTypeReferenceImpl().setSimpleName("boolean"));
         booleanMethod.setSimpleName("isSuperior");
         booleanClass.addTypeMember(booleanMethod);
+        launcher = new Launcher();
+        TestUnitHandler.initialize(launcher);
+
     }
+
+    
 
 
     @Test
     public void processBooleanTest(){
+        launcher.addProcessor(methodBooleanProcessor);
 
         methodBooleanProcessor.process(booleanClass);
 
@@ -62,7 +78,6 @@ public class MethodBooleanProcessorTest {
         CtReturnImpl ctReturnFalse = new CtReturnImpl();
         ctReturnTrue.setReturnedExpression(new CtLiteralImpl<Boolean>().setValue(true));
         ctReturnFalse.setReturnedExpression(new CtLiteralImpl<Boolean>().setValue(false));
-
         Assert.assertTrue("Classes must be the same", methodBooleanProcessor.getCtClassList().get(0).equals(booleanClass));
         Assert.assertTrue("Body must be a return statement", methodBooleanProcessor.getCtClassList().get(1).getMethod("isSuperior").getBody().getStatement(0).equals(ctReturnTrue));
         Assert.assertTrue("Body must be a return statement", methodBooleanProcessor.getCtClassList().get(2).getMethod("isSuperior").getBody().getStatement(0).equals(ctReturnFalse));

@@ -13,7 +13,9 @@ import spoon.support.reflect.code.CtUnaryOperatorImpl;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Processor which changes boolean operators in an if statement
+ */
 public class MethodChangeIfOperatorProcessor extends AbstractProcessor<CtClass> {
 
     private List<CtClass> ctClassList;
@@ -26,7 +28,7 @@ public class MethodChangeIfOperatorProcessor extends AbstractProcessor<CtClass> 
             ((CtMethod) m).getBody().getStatements().stream().filter(ctStatement -> ctStatement instanceof CtIf)
                     .forEach(
                             s -> {
-                                if( !(((CtIf) s).getCondition() instanceof CtBinaryOperator)) {
+                                if( (((CtIf) s).getCondition() instanceof CtUnaryOperator)) {
                                     CtUnaryOperator operator = new CtUnaryOperatorImpl();
                                     CtUnaryOperator oldOp =(CtUnaryOperator) ((CtIf) s).getCondition();
                                     operator.setOperand(oldOp);
@@ -71,7 +73,7 @@ public class MethodChangeIfOperatorProcessor extends AbstractProcessor<CtClass> 
                                     ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(binaryOperator);
                                 }
 
-                               // Result.showResults();
+                               Result.showResults();
 
                             });
         });

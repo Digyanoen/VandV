@@ -13,7 +13,9 @@ import spoon.support.reflect.code.CtReturnImpl;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Processor which replaces the body of a boolean method by true then false
+ */
 public class MethodBooleanProcessor extends AbstractProcessor<CtClass> {
     private List<CtClass> ctClassList;
 
@@ -36,7 +38,7 @@ public class MethodBooleanProcessor extends AbstractProcessor<CtClass> {
             ctClassList.add(ctClassCloned.clone());
             ((CtMethod) m).setBody(body);
 
-            //Result.showResults();
+            Result.showResults();
         });
     }
 
