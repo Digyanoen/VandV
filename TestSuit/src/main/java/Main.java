@@ -1,15 +1,12 @@
+import Testing.TestUnitHandler;
 import org.junit.Test;
-import org.junit.runner.JUnitCore;
-import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import processors.MethodChangeOperatorProcessor;
 import spoon.Launcher;
 import spoon.SpoonModelBuilder;
 import spoon.reflect.CtModel;
-import spoon.reflect.code.CtStatement;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtMethod;
-import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.factory.Factory;
 import spoon.reflect.visitor.filter.TypeFilter;
@@ -21,7 +18,6 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
-import static javafx.application.Platform.exit;
 import static org.junit.Assert.assertTrue;
 
 public class Main {
@@ -45,59 +41,38 @@ public class Main {
         launcher.addInputResource(inDir.getPath());
         launcher.buildModel();
 
-        //Récupère la liste des classes de test
-        List<CtType> testtypes = new ArrayList<CtType>();
-
-        for (CtMethod<?> meth : launcher.getModel().getRootPackage().getElements(new TypeFilter<CtMethod>(CtMethod.class) {
-            @Override
-            public boolean matches(CtMethod element) {
-                return !(testtypes.contains((CtType)element.getParent())) && super.matches(element) && (element.getAnnotation(Test.class) != null);
-            }
-        })) {
-            testtypes.add((CtType)meth.getParent());
-        }
-
         //Récupère la factory
         Factory factory = launcher.getFactory();
         //Crée un compiler spoon et compile
         SpoonModelBuilder compiler = launcher.createCompiler(factory);
-        compiler.compile();
 
-        //Initialise JUnit pour l'exécution des tests
-        JUnitCore junit = new JUnitCore();
+        TestUnitHandler.initialize(launcher);
 
-        File classRoot = new File("./spooned-classes/");
+        //Récupère la liste des tests qui ont échoués
+        List<Failure> methodsToJunk = TestUnitHandler.getFailures();
 
-        //Initialise le ClassLoader
-        URLClassLoader classLoader = null;
-        try {
-            classLoader = URLClassLoader.newInstance(new URL[]{classRoot.toURI().toURL()});
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-
+        //TODO Améliorer la suppression des tests
         //Lance les différents tests et supprime les tests échouant
         //Pour chaque classe de test
-        for(CtType elm: testtypes) {
-
-            //Convertie le CtType en Class
-            Class<?> cls = null;
-            try {
-                cls = classLoader.loadClass(elm.getQualifiedName());
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-
-            //Récupère la liste des tests qui ont échoués
-            List<Failure> methodsToJunk = junit.run(cls).getFailures();
+        for(CtType elm: TestUnitHandler.getTests()) {
 
             //Pour chaque échec supprime le test du modèle
             for (Failure junk : methodsToJunk) {
-                elm.removeMethod(elm.getMethod(junk.getDescription().getMethodName()));
+                System.out.println(junk.getDescription().getClassName());
+                if(junk.getDescription().getClassName().equals(elm.getQualifiedName())) { //TODO Vérifier le cas des classes de même nom
+                    elm.removeMethod(elm.getMethod(junk.getDescription().getMethodName()));
+                }
             }
         }
 
         CtModel root = launcher.getModel();
+
+        List<CtMethod> meth = root.getElements(new TypeFilter<CtMethod>(CtMethod.class));
+
+        //list all classes of the model
+        for(CtMethod m : meth) {
+            System.out.println("method: "+m.getSimpleName());
+        }
 
         List<CtClass> clazzes = root.getElements(new TypeFilter<CtClass>(CtClass.class));
 
@@ -109,10 +84,11 @@ public class Main {
         // Launch a mutator
         MethodChangeOperatorProcessor classProc = new MethodChangeOperatorProcessor();
         clazzes.stream().forEach(m -> {
-                    System.out.println(m);
                     classProc.process(m);
                 }
         );
+
+        //root.getElements(new TypeFilter<CtClass>(CtClass.class)).stream().forEach(ctClass -> System.out.println(ctClass));
     }
 
     private static void printLines(String name, InputStream ins) throws Exception {
