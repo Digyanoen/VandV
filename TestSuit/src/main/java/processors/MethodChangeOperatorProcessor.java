@@ -12,6 +12,9 @@ import spoon.reflect.declaration.CtMethod;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Processor which changes arithmetic operators
+ */
 public class MethodChangeOperatorProcessor extends AbstractProcessor<CtClass> {
 
     private List<CtClass> ctClassList;
@@ -52,7 +55,7 @@ public class MethodChangeOperatorProcessor extends AbstractProcessor<CtClass> {
 
                             });
 
-            //Result.showResults();
+            Result.showResults();
         });
     }
 

@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Processor which removes the body of a void method
+ */
 public class MethodVoidProcessor extends AbstractProcessor<CtClass> {
 
     private List <CtClass> ctClasses;
@@ -30,7 +33,7 @@ public class MethodVoidProcessor extends AbstractProcessor<CtClass> {
                            ctClasses.add(ctClassCloned.clone());
                            ((CtMethod) method).setBody(body);
 
-                           //Result.showResults();
+                           Result.showResults();
                        });
 
     }

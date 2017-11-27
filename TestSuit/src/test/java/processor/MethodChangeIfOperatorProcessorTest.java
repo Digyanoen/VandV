@@ -87,7 +87,7 @@ public class MethodChangeIfOperatorProcessorTest {
 
 
     @Test
-    public void MethodChangeOperatorErrorTest() {
+    public void MethodChangeUnaryOperatorTest() {
         CtClass changeAnd = new CtClassImpl();
         changeAnd.setSimpleName("ChangeAnd");
         changeAnd.addModifier(ModifierKind.PUBLIC);
@@ -113,7 +113,7 @@ public class MethodChangeIfOperatorProcessorTest {
 
         methodChangeIfOperatorProcessor.process(changeAnd);
         for(CtClass c : methodChangeIfOperatorProcessor.getCtClassList()){
-            System.out.println(c);
+            Assert.assertTrue("Operator is not",((CtUnaryOperator) ((CtIf) c.getMethod("changeAndMethod").getBody().getStatement(0)).getCondition()).getKind().equals(UnaryOperatorKind.NOT));
         }
     }
 
