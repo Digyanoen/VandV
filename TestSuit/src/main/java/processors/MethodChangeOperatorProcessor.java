@@ -1,5 +1,6 @@
 package processors;
 
+import Testing.Result;
 import spoon.processing.AbstractProcessor;
 import spoon.reflect.code.BinaryOperatorKind;
 import spoon.reflect.code.CtBinaryOperator;
@@ -13,7 +14,7 @@ import java.util.List;
 
 public class MethodChangeOperatorProcessor extends AbstractProcessor<CtClass> {
 
-    List<CtClass> ctClassList;
+    private List<CtClass> ctClassList;
 
     public void process(CtClass ctClass) {
         ctClassList = new ArrayList<>();
@@ -23,6 +24,7 @@ public class MethodChangeOperatorProcessor extends AbstractProcessor<CtClass> {
             ((CtMethod) m).getBody().getStatements().stream().filter(ctStatement -> ctStatement instanceof CtLocalVariable)
                     .forEach(
                             s -> {
+                                if (!((((CtLocalVariable) s).getAssignment()) instanceof CtBinaryOperator)) return;
 
                                 BinaryOperatorKind binaryOperator = ((CtBinaryOperator) ((CtLocalVariable) s).getAssignment()).getKind();
                                 BinaryOperatorKind newOp;
@@ -49,6 +51,8 @@ public class MethodChangeOperatorProcessor extends AbstractProcessor<CtClass> {
                                 ((CtBinaryOperator) ((CtLocalVariable) s).getAssignment()).setKind(binaryOperator);
 
                             });
+
+            Result.showResults();
         });
     }
 

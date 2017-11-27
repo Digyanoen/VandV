@@ -1,5 +1,6 @@
 package processors;
 
+import Testing.Result;
 import spoon.processing.AbstractProcessor;
 import spoon.reflect.code.CtBlock;
 import spoon.reflect.code.CtReturn;
@@ -14,7 +15,7 @@ import java.util.List;
 
 
 public class MethodBooleanProcessor extends AbstractProcessor<CtClass> {
-    List<CtClass> ctClassList;
+    private List<CtClass> ctClassList;
 
     @Override
     public void process(CtClass ctClass) {
@@ -34,6 +35,8 @@ public class MethodBooleanProcessor extends AbstractProcessor<CtClass> {
             ((CtMethod) m).setBody(returnFalse);
             ctClassList.add(ctClassCloned.clone());
             ((CtMethod) m).setBody(body);
+
+            Result.showResults();
         });
     }
 
