@@ -1,5 +1,6 @@
 package processors;
 
+import Testing.Result;
 import spoon.processing.AbstractProcessor;
 import spoon.reflect.code.CtBlock;
 import spoon.reflect.declaration.CtClass;
@@ -13,7 +14,7 @@ import java.util.Set;
 
 public class MethodVoidProcessor extends AbstractProcessor<CtClass> {
 
-    List <CtClass> ctClasses;
+    private List <CtClass> ctClasses;
     @Override
     public void process(CtClass ctClass) {
         ctClasses = new ArrayList<>();
@@ -28,6 +29,8 @@ public class MethodVoidProcessor extends AbstractProcessor<CtClass> {
                            ((CtMethod)method).setBody(null);
                            ctClasses.add(ctClassCloned.clone());
                            ((CtMethod) method).setBody(body);
+
+                           //Result.showResults();
                        });
 
     }
