@@ -41,15 +41,12 @@ public class Main {
         launcher.addInputResource(inDir.getPath());
         launcher.buildModel();
 
-        //Récupère la factory
-        Factory factory = launcher.getFactory();
-        //Crée un compiler spoon et compile
-        SpoonModelBuilder compiler = launcher.createCompiler(factory);
-
         TestUnitHandler.initialize(launcher);
 
         //Récupère la liste des tests qui ont échoués
         List<Failure> methodsToJunk = TestUnitHandler.getFailures();
+
+        List<CtType> tests = TestUnitHandler.getTests();
 
         //TODO Améliorer la suppression des tests
         //Lance les différents tests et supprime les tests échouant
@@ -74,7 +71,12 @@ public class Main {
             System.out.println("method: "+m.getSimpleName());
         }
 
-        List<CtClass> clazzes = root.getElements(new TypeFilter<CtClass>(CtClass.class));
+        List<CtClass> clazzes = root.getElements(new TypeFilter<CtClass>(CtClass.class){
+            @Override
+            public boolean matches(CtClass element) {
+                return super.matches(element) && !tests.contains(element);
+            }
+        });
 
         //list all classes of the model
         for(CtClass c : clazzes) {
