@@ -111,6 +111,8 @@ public class MethodChangeIfOperatorProcessorTest {
         ctMethod.setSimpleName("changeAndMethod");
         ctMethod.addModifier(ModifierKind.PUBLIC);
         ctIf.setCondition(condition);
+        ctIf.setThenStatement(ctStatement1);
+        ctIf.setElseStatement(ctStatement2);
         ctBlock.addStatement(ctIf);
 
         CtTypeReference ctTypeReference = new CtTypeReferenceImpl();

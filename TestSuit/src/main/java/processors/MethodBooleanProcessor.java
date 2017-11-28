@@ -4,7 +4,6 @@ import Testing.Result;
 import spoon.processing.AbstractProcessor;
 import spoon.reflect.code.CtBlock;
 import spoon.reflect.code.CtReturn;
-import spoon.reflect.code.CtStatement;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtMethod;
 import spoon.support.reflect.code.CtLiteralImpl;
@@ -33,12 +32,18 @@ public class MethodBooleanProcessor extends AbstractProcessor<CtClass> {
             returnFalse.setReturnedExpression(new CtLiteralImpl().setValue(false));
 
             ((CtMethod) m).setBody(returnTrue);
+            ctClass.replace(ctClassCloned);
             ctClassList.add(ctClassCloned.clone());
+            Result.showResults((CtMethod) m);
+            ctClassCloned.replace(ctClass);
+
             ((CtMethod) m).setBody(returnFalse);
+            ctClass.replace(ctClassCloned);
             ctClassList.add(ctClassCloned.clone());
+            Result.showResults((CtMethod) m);
+            ctClassCloned.replace(ctClass);
             ((CtMethod) m).setBody(body);
 
-            Result.showResults();
         });
     }
 

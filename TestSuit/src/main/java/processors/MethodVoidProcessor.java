@@ -6,11 +6,8 @@ import spoon.reflect.code.CtBlock;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtMethod;
 
-import javax.annotation.processing.RoundEnvironment;
-import javax.lang.model.element.TypeElement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Processor which removes the body of a void method
@@ -30,10 +27,12 @@ public class MethodVoidProcessor extends AbstractProcessor<CtClass> {
                        {
                            CtBlock body = ((CtMethod)method).getBody();
                            ((CtMethod)method).setBody(null);
+                           ctClass.replace(ctClassCloned);
+                           Result.showResults((CtMethod) method);
+                           ctClassCloned.replace(ctClass);
+                           Result.showResults((CtMethod) method);
                            ctClasses.add(ctClassCloned.clone());
                            ((CtMethod) method).setBody(body);
-
-                           Result.showResults();
                        });
 
     }

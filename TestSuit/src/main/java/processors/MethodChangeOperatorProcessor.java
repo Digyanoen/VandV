@@ -4,7 +4,6 @@ import Testing.Result;
 import spoon.processing.AbstractProcessor;
 import spoon.reflect.code.BinaryOperatorKind;
 import spoon.reflect.code.CtBinaryOperator;
-import spoon.reflect.code.CtIf;
 import spoon.reflect.code.CtLocalVariable;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtMethod;
@@ -50,12 +49,14 @@ public class MethodChangeOperatorProcessor extends AbstractProcessor<CtClass> {
                                         break;
                                 }
                                 ((CtBinaryOperator) ((CtLocalVariable) s).getAssignment()).setKind(newOp);
+                                ctClass.replace(ctClassCloned);
+                                Result.showResults((CtMethod) m);
                                 ctClassList.add(ctClassCloned.clone());
                                 ((CtBinaryOperator) ((CtLocalVariable) s).getAssignment()).setKind(binaryOperator);
 
                             });
 
-            Result.showResults();
+
         });
     }
 

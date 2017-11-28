@@ -37,6 +37,9 @@ public class MethodVoidProcessorTest{
     private static CtClass removeClass;
 
     @BeforeClass
+    /**
+     * set up the data
+     */
     public static void setUp(){
         removeClass = new CtClassImpl();
         methodVoidProcessor = new MethodVoidProcessor();

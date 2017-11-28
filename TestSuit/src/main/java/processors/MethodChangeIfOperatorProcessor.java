@@ -35,6 +35,9 @@ public class MethodChangeIfOperatorProcessor extends AbstractProcessor<CtClass> 
                                     operator.setKind(UnaryOperatorKind.NOT);
                                     ((CtIf) s).setCondition(operator);
                                     //TODO replace
+                                    ctClass.replace(ctClassCloned);
+                                    Result.showResults((CtMethod) m);
+                                    ctClassCloned.replace(ctClass);
                                     ctClassList.add(ctClassCloned.clone());
                                     ((CtIf) s).setCondition(oldOp);
 
@@ -69,11 +72,13 @@ public class MethodChangeIfOperatorProcessor extends AbstractProcessor<CtClass> 
 
                                     }
                                     ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(newOp);
+                                    ctClass.replace(ctClassCloned);
+                                    Result.showResults((CtMethod) m);
+                                    ctClassCloned.replace(ctClass);
                                     ctClassList.add(ctClassCloned.clone());
                                     ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(binaryOperator);
                                 }
 
-                               Result.showResults();
 
                             });
         });

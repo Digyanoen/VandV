@@ -38,6 +38,9 @@ public class MethodBooleanProcessorTest {
     private static Launcher launcher;
 
     @BeforeClass
+    /**
+     * set up the data
+     */
     public static void setup(){
         methodBooleanProcessor = new MethodBooleanProcessor();
         booleanClass = new CtClassImpl();
