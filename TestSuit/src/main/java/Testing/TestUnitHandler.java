@@ -5,8 +5,10 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.notification.Failure;
 import spoon.Launcher;
 import spoon.SpoonModelBuilder;
+import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtType;
+import spoon.reflect.factory.Factory;
 import spoon.reflect.visitor.filter.TypeFilter;
 
 import java.io.File;
@@ -18,6 +20,7 @@ import java.util.List;
 
 public class TestUnitHandler {
 
+    private static Launcher launcher;
     private static SpoonModelBuilder compiler;
     private static JUnitCore junit;
     private static List<CtType> tests;
@@ -27,6 +30,12 @@ public class TestUnitHandler {
      * @return La liste d'échecs
      */
     public static List<Failure> getFailures(){
+
+        //Crée le compiler Spoon
+        compiler = launcher.createCompiler(launcher.getFactory());
+
+//        System.out.println(launcher.getModel().getElements(new TypeFilter<>(CtClass.class)));
+
         compiler.compile();
 
         File classRoot = new File("./spooned-classes/");
@@ -61,12 +70,11 @@ public class TestUnitHandler {
 
     /**
      * Initialise le handler, à savoir le JUnitCore, le compiler Spoon et la liste des tests présents dans le modèle
-     * @param launcher launcher contenant le modèle du projet à tester
+     * @param l launcher contenant le modèle du projet à tester
      */
-    public static void initialize(Launcher launcher){
+    public static void initialize(Launcher l){
 
-        //Crée le compiler Spoon
-        compiler = launcher.createCompiler(launcher.getFactory());
+         launcher = l;
 
         //Initialise JUnit pour l'exécution des tests
         junit = new JUnitCore();
@@ -80,7 +88,8 @@ public class TestUnitHandler {
                 return !(tests.contains((CtType)element.getParent())) && super.matches(element) && (element.getAnnotation(Test.class) != null);
             }
         })) {
-            tests.add((CtType)meth.getParent());
+            CtType c = (CtType)meth.getParent();
+            if(!tests.contains(c))tests.add(c);
         }
     }
 
