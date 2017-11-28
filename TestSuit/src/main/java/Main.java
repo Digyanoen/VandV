@@ -1,7 +1,10 @@
 import Testing.TestUnitHandler;
 import org.junit.Test;
 import org.junit.runner.notification.Failure;
+import processors.MethodBooleanProcessor;
+import processors.MethodChangeIfOperatorProcessor;
 import processors.MethodChangeOperatorProcessor;
+import processors.MethodVoidProcessor;
 import spoon.Launcher;
 import spoon.SpoonModelBuilder;
 import spoon.reflect.CtModel;
@@ -88,6 +91,30 @@ public class Main {
         clazzes.stream().forEach(m -> {
                     classProc.process(m);
                 }
+
+
+        );
+        // Launch a mutator
+        MethodChangeIfOperatorProcessor classProc2 = new MethodChangeIfOperatorProcessor();
+        clazzes.stream().forEach(m -> {
+                    classProc2.process(m);
+                }
+
+
+        );
+        MethodBooleanProcessor classProc3 = new MethodBooleanProcessor();
+        clazzes.stream().forEach(m -> {
+                    classProc3.process(m);
+                }
+
+
+        );
+        MethodVoidProcessor classProc4 = new MethodVoidProcessor();
+        clazzes.stream().forEach(m -> {
+                    classProc4.process(m);
+                }
+
+
         );
 
         //root.getElements(new TypeFilter<CtClass>(CtClass.class)).stream().forEach(ctClass -> System.out.println(ctClass));

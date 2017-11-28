@@ -38,7 +38,8 @@ public class TestUnitHandler {
 
         compiler.compile();
 
-        File classRoot = new File("./spooned-classes/");
+        File classRoot = compiler.getBinaryOutputDirectory();
+        System.out.println(compiler.getBinaryOutputDirectory());
 
         List<Failure> result = new ArrayList<Failure>();
 

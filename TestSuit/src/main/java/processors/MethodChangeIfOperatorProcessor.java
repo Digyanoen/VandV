@@ -24,63 +24,66 @@ public class MethodChangeIfOperatorProcessor extends AbstractProcessor<CtClass> 
         ctClassList = new ArrayList<>();
         CtClass ctClassCloned = ctClass.clone();
         ctClassList.add(ctClass);
-        ctClassCloned.getMethods().stream().forEach(m -> {
-            ((CtMethod) m).getBody().getStatements().stream().filter(ctStatement -> ctStatement instanceof CtIf)
-                    .forEach(
-                            s -> {
-                                if( (((CtIf) s).getCondition() instanceof CtUnaryOperator)) {
-                                    CtUnaryOperator operator = new CtUnaryOperatorImpl();
-                                    CtUnaryOperator oldOp =(CtUnaryOperator) ((CtIf) s).getCondition();
-                                    operator.setOperand(oldOp);
-                                    operator.setKind(UnaryOperatorKind.NOT);
-                                    ((CtIf) s).setCondition(operator);
-                                    //TODO replace
-                                    ctClass.replace(ctClassCloned);
-                                    Result.showResults((CtMethod) m);
-                                    ctClassCloned.replace(ctClass);
-                                    ctClassList.add(ctClassCloned.clone());
-                                    ((CtIf) s).setCondition(oldOp);
+        ctClassCloned.getMethods().forEach(m -> {
+            CtBlock methods = ((CtMethod) m).getBody();
+            if(methods != null) {
+                ((CtMethod) m).getBody().getStatements().stream().filter(ctStatement -> ctStatement instanceof CtIf)
+                        .forEach(
+                                s -> {
+                                    if ((((CtIf) s).getCondition() instanceof CtUnaryOperator)) {
+                                        CtUnaryOperator operator = new CtUnaryOperatorImpl();
+                                        CtUnaryOperator oldOp = (CtUnaryOperator) ((CtIf) s).getCondition();
+                                        operator.setOperand(oldOp);
+                                        operator.setKind(UnaryOperatorKind.NOT);
+                                        ((CtIf) s).setCondition(operator);
+                                        //TODO replace
+                                        ctClass.replace(ctClassCloned);
+                                        Result.showResults((CtMethod) m);
+                                        ctClassCloned.replace(ctClass);
+                                        ctClassList.add(ctClassCloned.clone());
+                                        ((CtIf) s).setCondition(oldOp);
 
 
-                                }else  if( (((CtIf) s).getCondition() instanceof CtBinaryOperator)) {
+                                    } else if ((((CtIf) s).getCondition() instanceof CtBinaryOperator)) {
 
-                                    BinaryOperatorKind binaryOperator = ((CtBinaryOperator) ((CtIf) s).getCondition()).getKind();
-                                    BinaryOperatorKind newOp;
+                                        BinaryOperatorKind binaryOperator = ((CtBinaryOperator) ((CtIf) s).getCondition()).getKind();
+                                        BinaryOperatorKind newOp;
 
-                                    switch (binaryOperator) {
-                                        case AND:
-                                            newOp = BinaryOperatorKind.OR;
-                                            break;
-                                        case OR:
-                                            newOp = BinaryOperatorKind.AND;
-                                            break;
-                                        case EQ:
-                                            newOp = BinaryOperatorKind.NE;
-                                            break;
-                                        case NE:
-                                            newOp = BinaryOperatorKind.EQ;
-                                            break;
-                                        case LE:
-                                            newOp = BinaryOperatorKind.GT;
-                                            break;
-                                        case GT:
-                                            newOp = BinaryOperatorKind.LE;
-                                            break;
-                                        default:
-                                            newOp = binaryOperator;
-                                            break;
+                                        switch (binaryOperator) {
+                                            case AND:
+                                                newOp = BinaryOperatorKind.OR;
+                                                break;
+                                            case OR:
+                                                newOp = BinaryOperatorKind.AND;
+                                                break;
+                                            case EQ:
+                                                newOp = BinaryOperatorKind.NE;
+                                                break;
+                                            case NE:
+                                                newOp = BinaryOperatorKind.EQ;
+                                                break;
+                                            case LE:
+                                                newOp = BinaryOperatorKind.GT;
+                                                break;
+                                            case GT:
+                                                newOp = BinaryOperatorKind.LE;
+                                                break;
+                                            default:
+                                                newOp = binaryOperator;
+                                                break;
 
+                                        }
+                                        ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(newOp);
+                                        ctClass.replace(ctClassCloned);
+                                        Result.showResults((CtMethod) m);
+                                        ctClassCloned.replace(ctClass);
+                                        ctClassList.add(ctClassCloned.clone());
+                                        ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(binaryOperator);
                                     }
-                                    ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(newOp);
-                                    ctClass.replace(ctClassCloned);
-                                    Result.showResults((CtMethod) m);
-                                    ctClassCloned.replace(ctClass);
-                                    ctClassList.add(ctClassCloned.clone());
-                                    ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(binaryOperator);
-                                }
 
 
-                            });
+                                });
+            }
         });
     }
 
