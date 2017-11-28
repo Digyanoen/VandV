@@ -18,7 +18,7 @@ public class Result {
         } else {
             System.out.println("Mutant tué par les tests suivant :");
             for (Failure f : failureList) {
-                System.out.println(f.getDescription().getMethodName());
+                System.out.println("    " + f.getDescription().getMethodName());
 
             }
         }

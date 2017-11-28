@@ -7,7 +7,6 @@ import spoon.Launcher;
 import spoon.SpoonModelBuilder;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtType;
-import spoon.reflect.factory.Factory;
 import spoon.reflect.visitor.filter.TypeFilter;
 
 import java.io.File;
@@ -23,6 +22,10 @@ public class TestUnitHandler {
     private static JUnitCore junit;
     private static List<CtType> tests;
 
+    /**
+     * Récupère la liste des tests qui ont échoué
+     * @return La liste d'échecs
+     */
     public static List<Failure> getFailures(){
         compiler.compile();
 
@@ -62,7 +65,9 @@ public class TestUnitHandler {
      */
     public static void initialize(Launcher launcher){
 
+        //Crée le compiler Spoon
         compiler = launcher.createCompiler(launcher.getFactory());
+
         //Initialise JUnit pour l'exécution des tests
         junit = new JUnitCore();
 
@@ -87,4 +92,3 @@ public class TestUnitHandler {
         return tests;
     }
 }
-
