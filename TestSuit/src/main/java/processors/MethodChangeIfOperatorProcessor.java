@@ -1,9 +1,6 @@
 package processors;
 
 import Testing.Result;
-import Testing.TestUnitHandler;
-import org.eclipse.jdt.internal.core.SourceType;
-import org.junit.runner.notification.Failure;
 import spoon.processing.AbstractProcessor;
 import spoon.reflect.code.*;
 import spoon.reflect.declaration.CtClass;
@@ -30,6 +27,7 @@ public class MethodChangeIfOperatorProcessor extends AbstractProcessor<CtClass> 
                 ((CtMethod) m).getBody().getStatements().stream().filter(ctStatement -> ctStatement instanceof CtIf)
                         .forEach(
                                 s -> {
+                                    Mutant mutant;
                                     if ((((CtIf) s).getCondition() instanceof CtUnaryOperator)) {
                                         CtUnaryOperator operator = new CtUnaryOperatorImpl();
                                         CtUnaryOperator oldOp = (CtUnaryOperator) ((CtIf) s).getCondition();
@@ -38,7 +36,8 @@ public class MethodChangeIfOperatorProcessor extends AbstractProcessor<CtClass> 
                                         ((CtIf) s).setCondition(operator);
                                         //TODO replace
                                         ctClass.replace(ctClassCloned);
-                                        Result.showResults((CtMethod) m);
+                                        mutant =new Mutant((CtMethod) m, s, "ChangeBooleanOperator", s.getPosition().getLine());
+                                        Result.showResults(mutant);
                                         ctClassCloned.replace(ctClass);
                                         ctClassList.add(ctClassCloned.clone());
                                         ((CtIf) s).setCondition(oldOp);
@@ -75,7 +74,9 @@ public class MethodChangeIfOperatorProcessor extends AbstractProcessor<CtClass> 
                                         }
                                         ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(newOp);
                                         ctClass.replace(ctClassCloned);
-                                        Result.showResults((CtMethod) m);
+
+                                        mutant =new Mutant((CtMethod) m, s, "ChangeBooleanOperator", s.getPosition().getLine());
+                                        Result.showResults(mutant);
                                         ctClassCloned.replace(ctClass);
                                         ctClassList.add(ctClassCloned.clone());
                                         ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(binaryOperator);

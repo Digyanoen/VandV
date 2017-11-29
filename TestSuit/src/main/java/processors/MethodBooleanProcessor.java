@@ -34,13 +34,15 @@ public class MethodBooleanProcessor extends AbstractProcessor<CtClass> {
             ((CtMethod) m).setBody(returnTrue);
             ctClass.replace(ctClassCloned);
             ctClassList.add(ctClassCloned.clone());
-            Result.showResults((CtMethod) m);
+            Mutant mutant = new Mutant((CtMethod) m, returnTrue, "ReplaceBooleanBody", 1);
+            Result.showResults(mutant);
             ctClassCloned.replace(ctClass);
 
             ((CtMethod) m).setBody(returnFalse);
             ctClass.replace(ctClassCloned);
             ctClassList.add(ctClassCloned.clone());
-            Result.showResults((CtMethod) m);
+            mutant.setStatement(returnFalse);
+            Result.showResults(mutant);
             ctClassCloned.replace(ctClass);
             ((CtMethod) m).setBody(body);
 
