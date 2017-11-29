@@ -1,4 +1,5 @@
 import Testing.TestUnitHandler;
+import com.sun.org.apache.xalan.internal.xsltc.compiler.CompilerException;
 import org.junit.Test;
 import org.junit.runner.notification.Failure;
 import processors.MethodBooleanProcessor;
@@ -13,6 +14,7 @@ import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.factory.Factory;
 import spoon.reflect.visitor.filter.TypeFilter;
+import sun.rmi.runtime.Log;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -20,6 +22,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import static org.junit.Assert.assertTrue;
 
@@ -47,14 +50,19 @@ public class Main {
         TestUnitHandler.initialize(launcher);
 
         //Récupère la liste des tests qui ont échoués
-        List<Failure> methodsToJunk = TestUnitHandler.getFailures();
+        List<Failure> methodsToJunk = null;
+        try {
+            methodsToJunk = TestUnitHandler.getFailures();
+        } catch (CompilerException e) {
+            e.printStackTrace();
+        }
 
         List<CtType> tests = TestUnitHandler.getTests();
 
         //TODO Améliorer la suppression des tests
         //Lance les différents tests et supprime les tests échouant
         //Pour chaque classe de test
-        for(CtType elm: TestUnitHandler.getTests()) {
+        for(CtType elm: tests) {
 
             //Pour chaque échec supprime le test du modèle
             for (Failure junk : methodsToJunk) {
