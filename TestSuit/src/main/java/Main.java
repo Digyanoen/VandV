@@ -28,6 +28,8 @@ import static org.junit.Assert.assertTrue;
 
 public class Main {
 
+    private static Launcher launcher;
+
     public static void main(String[] args){
 
         //Vérifie si nous avons les arguments nécessaire
@@ -35,64 +37,42 @@ public class Main {
             throw new IllegalArgumentException("Expected parameters : <source folder>");
         }
 
-        //Initialise le launcher principal
-        Launcher launcher = new Launcher();
-        launcher.getEnvironment().setAutoImports(true);
-        launcher.getEnvironment().setNoClasspath(true);
-
         //Récupère les dossiers de sources et de tests
         File inDir = new File(args[0]);
 
-        //Ajoute les sources aux launchers et build les models
-        launcher.addInputResource(inDir.getPath());
-        launcher.buildModel();
+        //Initialise le Launcher
+        initLauncher(inDir);
 
-        TestUnitHandler.initialize(launcher);
-
-        //Récupère la liste des tests qui ont échoués
-        List<Failure> methodsToJunk = null;
+        //Retire les tests du projet qui sont ignorés ou qui échouent
         try {
-            methodsToJunk = TestUnitHandler.getFailures();
+            TestUnitHandler.removeJunkTest();
         } catch (CompilerException e) {
             e.printStackTrace();
         }
 
         List<CtType> tests = TestUnitHandler.getTests();
 
-        //TODO Améliorer la suppression des tests
-        //Lance les différents tests et supprime les tests échouant
-        //Pour chaque classe de test
-        for(CtType elm: tests) {
-
-            //Pour chaque échec supprime le test du modèle
-            for (Failure junk : methodsToJunk) {
-                System.out.println(junk.getDescription().getClassName());
-                if(junk.getDescription().getClassName().equals(elm.getQualifiedName())) { //TODO Vérifier le cas des classes de même nom
-                    elm.removeMethod(elm.getMethod(junk.getDescription().getMethodName()));
-                }
-            }
-        }
 
         CtModel root = launcher.getModel();
-
-        List<CtMethod> meth = root.getElements(new TypeFilter<CtMethod>(CtMethod.class));
-
-        //list all classes of the model
-        for(CtMethod m : meth) {
-            System.out.println("method: "+m.getSimpleName());
-        }
-
+//
+//        List<CtMethod> meth = root.getElements(new TypeFilter<CtMethod>(CtMethod.class));
+//
+//        //list all classes of the model
+//        for(CtMethod m : meth) {
+//            System.out.println("method: "+m.getSimpleName());
+//        }
+//
         List<CtClass> clazzes = root.getElements(new TypeFilter<CtClass>(CtClass.class){
             @Override
             public boolean matches(CtClass element) {
                 return super.matches(element) && !tests.contains(element);
             }
         });
-
-        //list all classes of the model
-        for(CtClass c : clazzes) {
-            System.out.println("class: "+c.getQualifiedName());
-        }
+//
+//        //list all classes of the model
+//        for(CtClass c : clazzes) {
+//            System.out.println("class: "+c.getQualifiedName());
+//        }
 
         // Launch a mutator
         MethodChangeOperatorProcessor classProc = new MethodChangeOperatorProcessor();
@@ -126,6 +106,20 @@ public class Main {
         );
 
         //root.getElements(new TypeFilter<CtClass>(CtClass.class)).stream().forEach(ctClass -> System.out.println(ctClass));
+    }
+
+    private static void initLauncher(File inDir) {
+
+        //Initialise le launcher principal
+        launcher = new Launcher();
+        launcher.getEnvironment().setAutoImports(true);
+        launcher.getEnvironment().setNoClasspath(true);
+
+        //Ajoute les sources aux launchers et build les models
+        launcher.addInputResource(inDir.getPath());
+        launcher.buildModel();
+
+        TestUnitHandler.initialize(launcher);
     }
 
     private static void printLines(String name, InputStream ins) throws Exception {

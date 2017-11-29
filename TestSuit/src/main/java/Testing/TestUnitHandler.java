@@ -2,6 +2,7 @@ package Testing;
 
 import com.sun.org.apache.xalan.internal.xsltc.compiler.CompilerException;
 import org.apache.log4j.Level;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.notification.Failure;
@@ -33,11 +34,15 @@ public class TestUnitHandler {
      */
     public static List<Failure> getFailures() throws CompilerException {
 
+
+        Launcher.LOGGER.setLevel(Level.DEBUG);
         //Crée le compiler Spoon
         compiler = launcher.createCompiler(launcher.getFactory());
         if(!compiler.compile()){
+            Launcher.LOGGER.setLevel(Level.OFF);
             throw new CompilerException("Spoon Compiler failed to compile the project.");
         }
+        Launcher.LOGGER.setLevel(Level.OFF);
 
         File classRoot = compiler.getBinaryOutputDirectory();
 
@@ -86,11 +91,38 @@ public class TestUnitHandler {
         for (CtMethod<?> meth : launcher.getModel().getRootPackage().getElements(new TypeFilter<CtMethod>(CtMethod.class) {
             @Override
             public boolean matches(CtMethod element) {
-                return !(tests.contains((CtType)element.getParent())) && super.matches(element) && (element.getAnnotation(Test.class) != null);
+                return super.matches(element) && (element.getAnnotation(Test.class) != null);
             }
         })) {
             CtType c = (CtType)meth.getParent();
             if(!tests.contains(c))tests.add(c);
+        }
+    }
+
+    public static void removeJunkTest() throws CompilerException {
+        List<Failure> methodsToJunk = getFailures();
+
+        //TODO Améliorer la suppression des tests
+        //Lance les différents tests et supprime les tests échouant
+        //Pour chaque classe de test
+        for(CtType elm: tests) {
+
+            //Pour chaque échec supprime le test du modèle
+            for (Failure junk : methodsToJunk) {
+                System.out.println(junk.getDescription().getClassName());
+                if(junk.getDescription().getClassName().equals(elm.getQualifiedName())) { //TODO Vérifier le cas des classes de même nom
+                    elm.removeMethod(elm.getMethod(junk.getDescription().getMethodName()));
+                }
+            }
+        }
+
+        for (CtMethod ignored : launcher.getModel().getElements(new TypeFilter<CtMethod>(CtMethod.class) {
+            @Override
+            public boolean matches(CtMethod element) {
+                return super.matches(element) && (element.getAnnotation(Ignore.class) != null);
+            }
+        })) {
+            ((CtType) ignored.getParent()).removeMethod(ignored);
         }
     }
 
