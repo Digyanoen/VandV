@@ -36,7 +36,7 @@ public class MethodChangeIfOperatorProcessor extends AbstractProcessor<CtClass> 
                                         ((CtIf) s).setCondition(operator);
                                         //TODO replace
                                         ctClass.replace(ctClassCloned);
-                                        mutant =new Mutant((CtMethod) m, s, "ChangeBooleanOperator", s.getPosition().getLine());
+                                        mutant =new Mutant(ctClass.getSimpleName(), (CtMethod) m, s, "ChangeBooleanOperator", s.getPosition().getLine());
                                         Result.showResults(mutant);
                                         ctClassCloned.replace(ctClass);
                                         ctClassList.add(ctClassCloned.clone());
@@ -75,7 +75,7 @@ public class MethodChangeIfOperatorProcessor extends AbstractProcessor<CtClass> 
                                         ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(newOp);
                                         ctClass.replace(ctClassCloned);
 
-                                        mutant =new Mutant((CtMethod) m, s, "ChangeBooleanOperator", s.getPosition().getLine());
+                                        mutant =new Mutant(ctClass.getSimpleName(), (CtMethod) m, s, "ChangeBooleanOperator", s.getPosition().getLine());
                                         Result.showResults(mutant);
                                         ctClassCloned.replace(ctClass);
                                         ctClassList.add(ctClassCloned.clone());

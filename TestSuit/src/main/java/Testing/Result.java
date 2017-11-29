@@ -16,6 +16,7 @@ public class Result {
 
     public static void showResults(Mutant m) {
         System.out.println("Nom du mutant : "+m.getMutantName());
+        System.out.println("Nom de la classe : "+m.getClassName());
         System.out.println("Mutation effectuée dans la méthode : "+m.getMethod().getSimpleName());
         System.out.println("Ligne de la modification : "+m.getLine());
         System.out.println("Modification effectué :"+m.getStatement());
@@ -37,7 +38,7 @@ public class Result {
             total+=1;
             System.out.println("Nombre de mutant : "+total);
             System.out.println("Nombre de mutant tués :"+killed);
-            System.out.println("Ratio : "+ (killed/total));
+            System.out.println("Ratio : "+ (double) (killed/total));
         } catch (CompilerException e) {
             e.printStackTrace();
         }

@@ -57,7 +57,7 @@ public class MethodChangeOperatorProcessor extends AbstractProcessor<CtClass> {
                                     }
                                     ((CtBinaryOperator) ((CtLocalVariable) s).getAssignment()).setKind(newOp);
                                     ctClass.replace(ctClassCloned);
-                                    Result.showResults(new Mutant((CtMethod) m, s, "ChangeArithmeticOperator",
+                                    Result.showResults(new Mutant(ctClass.getSimpleName(), (CtMethod) m, s, "ChangeArithmeticOperator",
                                             s.getPosition().getLine()));
                                     ctClassList.add(ctClassCloned.clone());
                                     ((CtBinaryOperator) ((CtLocalVariable) s).getAssignment()).setKind(binaryOperator);

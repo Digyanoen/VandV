@@ -2,6 +2,7 @@ package Testing;
 
 import com.sun.org.apache.xalan.internal.xsltc.compiler.CompilerException;
 import org.apache.log4j.Level;
+import org.eclipse.jdt.core.compiler.CategorizedProblem;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.notification.Failure;
@@ -12,6 +13,7 @@ import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.factory.Factory;
 import spoon.reflect.visitor.filter.TypeFilter;
+import spoon.support.compiler.jdt.JDTBasedSpoonCompiler;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -19,6 +21,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class TestUnitHandler {
 
@@ -35,11 +38,16 @@ public class TestUnitHandler {
 
         //Crée le compiler Spoon
         compiler = launcher.createCompiler(launcher.getFactory());
-        if(!compiler.compile()){
-            throw new CompilerException("Spoon Compiler failed to compile the project.");
+        Launcher.LOGGER.setLevel(Level.DEBUG);
+        compiler.compile();
+        Launcher.LOGGER.setLevel(Level.OFF);
+        List<CategorizedProblem> problems =((JDTBasedSpoonCompiler) compiler).getProblems();
+        if(problems.stream().filter(s -> (s.isError() && s.getCategoryID() != 50)).count() >0){
+            throw  new CompilerException("Spoon compiler failed to compile the project");
         }
 
         File classRoot = compiler.getBinaryOutputDirectory();
+
 
         List<Failure> result = new ArrayList<Failure>();
 
@@ -62,8 +70,8 @@ public class TestUnitHandler {
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
-
             result.addAll(junit.run(cls).getFailures());
+
         }
 
         return result;

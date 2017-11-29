@@ -25,9 +25,10 @@ public class MethodVoidProcessor extends AbstractProcessor<CtClass> {
                .forEach(
                        method ->
                        {
-                           Mutant m = new Mutant((CtMethod) method, null, "DeleteVoidBody", 1);
                            CtBlock body = ((CtMethod)method).getBody();
-                           ((CtMethod)method).setBody(ctClass.getFactory().createBlock());
+                           CtBlock voidBody = ctClass.getFactory().createBlock();
+                           ((CtMethod)method).setBody(voidBody);
+                           Mutant m = new Mutant(ctClass.getSimpleName(), (CtMethod) method, voidBody, "DeleteVoidBody", 1);
                            ctClass.replace(ctClassCloned);
                            Result.showResults(m);
                            ctClasses.add(ctClassCloned.clone());

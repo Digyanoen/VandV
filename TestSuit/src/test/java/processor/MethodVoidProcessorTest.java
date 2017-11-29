@@ -87,10 +87,11 @@ public class MethodVoidProcessorTest{
 
         PowerMockito.mockStatic(Result.class);
         PowerMockito.doNothing().when(Result.class);
+        CtBlock voidBody = removeClass.getFactory().createBlock();
         methodVoidProcessor.process(removeClass);
         Assert.assertTrue("Class must be the same", methodVoidProcessor.getCtClasses().get(0).equals(removeClass));
         for (CtClass c : methodVoidProcessor.getCtClasses().subList(1, methodVoidProcessor.getCtClasses().size())){
-            Assert.assertTrue("Body must be null", c.getMethod("removeBodyMethod").getBody() == null);
+            Assert.assertTrue("Body must be null", c.getMethod("removeBodyMethod").getBody().equals(voidBody));
         }
 
     }
