@@ -2,6 +2,7 @@ package Testing;
 
 import com.sun.org.apache.xalan.internal.xsltc.compiler.CompilerException;
 import org.apache.log4j.Level;
+import org.junit.Ignore;
 import org.eclipse.jdt.core.compiler.CategorizedProblem;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
@@ -48,7 +49,6 @@ public class TestUnitHandler {
 
         File classRoot = compiler.getBinaryOutputDirectory();
 
-
         List<Failure> result = new ArrayList<Failure>();
 
         //Initialise le ClassLoader
@@ -70,8 +70,8 @@ public class TestUnitHandler {
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
-            result.addAll(junit.run(cls).getFailures());
 
+            result.addAll(junit.run(cls).getFailures());
         }
 
         return result;
@@ -94,11 +94,38 @@ public class TestUnitHandler {
         for (CtMethod<?> meth : launcher.getModel().getRootPackage().getElements(new TypeFilter<CtMethod>(CtMethod.class) {
             @Override
             public boolean matches(CtMethod element) {
-                return !(tests.contains((CtType)element.getParent())) && super.matches(element) && (element.getAnnotation(Test.class) != null);
+                return super.matches(element) && (element.getAnnotation(Test.class) != null);
             }
         })) {
             CtType c = (CtType)meth.getParent();
             if(!tests.contains(c))tests.add(c);
+        }
+    }
+
+    public static void removeJunkTest() throws CompilerException {
+        List<Failure> methodsToJunk = getFailures();
+
+        //TODO Améliorer la suppression des tests
+        //Lance les différents tests et supprime les tests échouant
+        //Pour chaque classe de test
+        for(CtType elm: tests) {
+
+            //Pour chaque échec supprime le test du modèle
+            for (Failure junk : methodsToJunk) {
+                System.out.println(junk.getDescription().getClassName());
+                if(junk.getDescription().getClassName().equals(elm.getQualifiedName())) { //TODO Vérifier le cas des classes de même nom
+                    elm.removeMethod(elm.getMethod(junk.getDescription().getMethodName()));
+                }
+            }
+        }
+
+        for (CtMethod ignored : launcher.getModel().getElements(new TypeFilter<CtMethod>(CtMethod.class) {
+            @Override
+            public boolean matches(CtMethod element) {
+                return super.matches(element) && (element.getAnnotation(Ignore.class) != null);
+            }
+        })) {
+            ((CtType) ignored.getParent()).removeMethod(ignored);
         }
     }
 
