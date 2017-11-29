@@ -27,7 +27,7 @@ public class MethodVoidProcessor extends AbstractProcessor<CtClass> {
                        {
                            Mutant m = new Mutant((CtMethod) method, null, "DeleteVoidBody", 1);
                            CtBlock body = ((CtMethod)method).getBody();
-                           ((CtMethod)method).setBody(null);
+                           ((CtMethod)method).setBody(ctClass.getFactory().createBlock());
                            ctClass.replace(ctClassCloned);
                            Result.showResults(m);
                            ctClasses.add(ctClassCloned.clone());
