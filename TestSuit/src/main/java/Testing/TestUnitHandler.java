@@ -1,5 +1,7 @@
 package Testing;
 
+import com.sun.org.apache.xalan.internal.xsltc.compiler.CompilerException;
+import org.apache.log4j.Level;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.notification.Failure;
@@ -29,17 +31,15 @@ public class TestUnitHandler {
      * Récupère la liste des tests qui ont échoué
      * @return La liste d'échecs
      */
-    public static List<Failure> getFailures(){
+    public static List<Failure> getFailures() throws CompilerException {
 
         //Crée le compiler Spoon
         compiler = launcher.createCompiler(launcher.getFactory());
-
-//        System.out.println(launcher.getModel().getElements(new TypeFilter<>(CtClass.class)));
-
-        compiler.compile();
+        if(!compiler.compile()){
+            throw new CompilerException("Spoon Compiler failed to compile the project.");
+        }
 
         File classRoot = compiler.getBinaryOutputDirectory();
-        System.out.println(compiler.getBinaryOutputDirectory());
 
         List<Failure> result = new ArrayList<Failure>();
 
@@ -75,7 +75,7 @@ public class TestUnitHandler {
      */
     public static void initialize(Launcher l){
 
-         launcher = l;
+        launcher = l;
 
         //Initialise JUnit pour l'exécution des tests
         junit = new JUnitCore();
@@ -101,4 +101,5 @@ public class TestUnitHandler {
     public static List<CtType> getTests() {
         return tests;
     }
+
 }

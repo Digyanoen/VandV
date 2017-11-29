@@ -1,17 +1,22 @@
 package Testing;
 
+import com.sun.org.apache.xalan.internal.xsltc.compiler.CompilerException;
 import org.junit.runner.notification.Failure;
 import spoon.reflect.code.CtStatement;
 import spoon.reflect.declaration.CtMethod;
 
+import java.io.File;
 import java.util.List;
 
 public class Result {
 
-
     public static void showResults(CtMethod m) {
-
-        List<Failure> failureList = TestUnitHandler.getFailures();
+        List<Failure> failureList = null;
+        try {
+            failureList = TestUnitHandler.getFailures();
+        } catch (CompilerException e) {
+            e.printStackTrace();
+        }
         if (failureList.size() == 0) {
             System.out.println("Le mutant n'a pas été tué");
             System.out.println("Mutation effectuée dans la méthode : "+m.getSimpleName());
