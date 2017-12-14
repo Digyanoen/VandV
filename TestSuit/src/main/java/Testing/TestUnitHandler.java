@@ -9,10 +9,8 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.notification.Failure;
 import spoon.Launcher;
 import spoon.SpoonModelBuilder;
-import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtType;
-import spoon.reflect.factory.Factory;
 import spoon.reflect.visitor.filter.TypeFilter;
 import spoon.support.compiler.jdt.JDTBasedSpoonCompiler;
 
@@ -22,7 +20,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class TestUnitHandler {
 
@@ -39,9 +36,11 @@ public class TestUnitHandler {
 
         //Crée le compiler Spoon
         compiler = launcher.createCompiler(launcher.getFactory());
-        Launcher.LOGGER.setLevel(Level.DEBUG);
+//        Launcher.LOGGER.setLevel(Level.DEBUG);
+        //deleteSpoonDirectory();
         compiler.compile();
-        Launcher.LOGGER.setLevel(Level.OFF);
+
+//        Launcher.LOGGER.setLevel(Level.OFF);
         List<CategorizedProblem> problems =((JDTBasedSpoonCompiler) compiler).getProblems();
         if(problems.stream().filter(s -> (s.isError() && s.getCategoryID() != 50)).count() >0){
             throw  new CompilerException("Spoon compiler failed to compile the project");
@@ -75,6 +74,18 @@ public class TestUnitHandler {
         }
 
         return result;
+    }
+
+    public static void deleteSpoonDirectory() {
+        File spooned = new File("spooned-classes");
+        if(spooned.exists() && spooned.isDirectory()){
+            System.out.println("Testset");
+            System.out.println(spooned.getPath());
+            for(File f : spooned.listFiles()){
+                deleteFiles(f);
+            }
+            spooned.delete();
+        }
     }
 
     /**
@@ -136,5 +147,15 @@ public class TestUnitHandler {
     public static List<CtType> getTests() {
         return tests;
     }
+
+    private static void deleteFiles(File f){
+        if(f.isDirectory()){
+            for(File file : f.listFiles()){
+                deleteFiles(file);
+            }
+        }
+        f.delete();
+    }
+
 
 }
