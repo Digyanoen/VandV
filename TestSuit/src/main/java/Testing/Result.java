@@ -8,8 +8,8 @@ import java.io.*;
 import java.util.List;
 
 public class Result {
-    private static int total=0;
-    private static int killed = 0;
+    private static double total=0;
+    private static double killed = 0;
     private static File resume = new File("report.html");
     private static PrintWriter out;
     private static boolean initialized = false;
