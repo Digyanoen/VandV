@@ -54,11 +54,13 @@ public class Result {
                 out.println("</tr>");
                 out.println("</table>");
                 if(failureList.size() != 0){
+                    String id = "mutant"+total;
                     out.println("Le mutant "+m.getMutantName()+" a été tué par les tests suivant :");
-                    out.println("<ul>");
+                    out.println("<button onClick=\"hideList('"+id+"')\">Hide or extend</button>");
+                    out.println("<ul id=\""+id+"\">");
                     killed+=1;
                     for (Failure f : failureList) {
-                        out.println( f.getDescription().getMethodName()+", ");
+                        out.println( "<li>" +f.getDescription().getMethodName()+"</li> ");
 
                     }
                     out.println("</ul>");
@@ -93,6 +95,7 @@ public class Result {
 
         out.println("<!DOCTYPE html>");
         out.println("<meta charset=\"UTF-8\">");
+        out.println("<script type=\"text/javascript\" src=\"hide.js\"></script>)");
     }
 
     public static void deleteReport(){
