@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Processor which changes boolean operators in an if statement
  */
-public class MethodChangeIfOperatorProcessor extends AbstractProcessor<CtClass> {
+public class MethodChangeIfOperatorProcessor extends MyProcess {
 
     private List<CtClass> ctClassList;
 
@@ -89,8 +89,8 @@ public class MethodChangeIfOperatorProcessor extends AbstractProcessor<CtClass> 
     }
 
 
-    public List<CtClass> getCtClassList() {
+    @Override
+    public List<CtClass> getCtClasses() {
         return ctClassList;
     }
-
 }

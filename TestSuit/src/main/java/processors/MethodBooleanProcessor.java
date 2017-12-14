@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Processor which replaces the body of a boolean method by true then false
  */
-public class MethodBooleanProcessor extends AbstractProcessor<CtClass> {
+public class MethodBooleanProcessor extends MyProcess{
     private List<CtClass> ctClassList;
 
     @Override
@@ -49,8 +49,9 @@ public class MethodBooleanProcessor extends AbstractProcessor<CtClass> {
         });
     }
 
-    public List<CtClass> getCtClassList() {
+
+    @Override
+    public List<CtClass> getCtClasses() {
         return ctClassList;
     }
-
 }

@@ -1,3 +1,4 @@
+import Testing.Result;
 import Testing.TestUnitHandler;
 import com.sun.org.apache.xalan.internal.xsltc.compiler.CompilerException;
 import org.junit.Test;
@@ -36,6 +37,8 @@ public class Main {
         if(args.length < 1){
             throw new IllegalArgumentException("Expected parameters : <source folder>");
         }
+        TestUnitHandler.deleteSpoonDirectory();
+        Result.deleteReport();
 
         //Récupère les dossiers de sources et de tests
         File inDir = new File(args[0]);
@@ -43,25 +46,13 @@ public class Main {
         //Initialise le Launcher
         initLauncher(inDir);
 
-        //Retire les tests du projet qui sont ignorés ou qui échouent
-        try {
-            TestUnitHandler.removeJunkTest();
-        } catch (CompilerException e) {
-            e.printStackTrace();
-        }
+
 
         List<CtType> tests = TestUnitHandler.getTests();
 
 
         CtModel root = launcher.getModel();
-//
-//        List<CtMethod> meth = root.getElements(new TypeFilter<CtMethod>(CtMethod.class));
-//
-//        //list all classes of the model
-//        for(CtMethod m : meth) {
-//            System.out.println("method: "+m.getSimpleName());
-//        }
-//
+
         List<CtClass> clazzes = root.getElements(new TypeFilter<CtClass>(CtClass.class){
             @Override
             public boolean matches(CtClass element) {
@@ -105,7 +96,9 @@ public class Main {
 
         );
 
-        //root.getElements(new TypeFilter<CtClass>(CtClass.class)).stream().forEach(ctClass -> System.out.println(ctClass));
+        Result.closeReport();
+
+
     }
 
     private static void initLauncher(File inDir) {
@@ -131,20 +124,6 @@ public class Main {
         }
     }
 
-//    @Test
-//    public void testGoodTestClassNames() throws Exception {
-//        SpoonAPI spoon = new Launcher();
-//        spoon.addInputResource("src/test/java/");
-//        spoon.buildModel();
-//
-//        for (CtMethod<?> meth : spoon.getModel().getRootPackage().getElements(new TypeFilter<CtMethod>(CtMethod.class) {
-//            @Override
-//            public boolean matches(CtMethod element) {
-//                return super.matches(element) && element.getAnnotation(Test.class) != null;
-//            }
-//        })) {
-//            assertTrue("naming contract violated for "+meth.getParent(CtClass.class).getSimpleName(), meth.getParent(CtClass.class).getSimpleName().startsWith("Test") || meth.getParent(CtClass.class).getSimpleName().endsWith("Test"));
-//        }
-//    }
+
 
 }

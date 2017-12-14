@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Processor which changes arithmetic operators
  */
-public class MethodChangeOperatorProcessor extends AbstractProcessor<CtClass> {
+public class MethodChangeOperatorProcessor extends MyProcess{
 
     private List<CtClass> ctClassList;
 
@@ -70,8 +70,8 @@ public class MethodChangeOperatorProcessor extends AbstractProcessor<CtClass> {
     }
 
 
-    public List<CtClass> getCtClassList() {
+    @Override
+    public List<CtClass> getCtClasses() {
         return ctClassList;
     }
-
 }

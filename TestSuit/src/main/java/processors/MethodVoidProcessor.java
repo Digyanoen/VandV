@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Processor which removes the body of a void method
  */
-public class MethodVoidProcessor extends AbstractProcessor<CtClass> {
+public class MethodVoidProcessor extends MyProcess{
 
     private List <CtClass> ctClasses;
     @Override
@@ -37,6 +37,7 @@ public class MethodVoidProcessor extends AbstractProcessor<CtClass> {
 
     }
 
+    @Override
     public List<CtClass> getCtClasses() {
         return ctClasses;
     }

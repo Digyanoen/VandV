@@ -24,22 +24,22 @@ import java.util.List;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Result.class)
-public class MethodChangeOperatorProcessorTest {
+public class MethodChangeOperatorProcessorTest extends AbstractTest{
 
-    private MethodChangeOperatorProcessor methodChangeOperatorProcessor;
 
     public BinaryOperatorKind[][] binaryOperatorKind;
 
 
     @Before
     public void init() {
-        methodChangeOperatorProcessor = new MethodChangeOperatorProcessor();
+        process = new MethodChangeOperatorProcessor();
         binaryOperatorKind = new BinaryOperatorKind[][]{
                 {BinaryOperatorKind.PLUS, BinaryOperatorKind.MINUS},
                 {BinaryOperatorKind.MINUS, BinaryOperatorKind.PLUS},
                 {BinaryOperatorKind.MUL, BinaryOperatorKind.DIV},
                 {BinaryOperatorKind.DIV, BinaryOperatorKind.MUL},
-                {BinaryOperatorKind.MOD, BinaryOperatorKind.MUL}
+                {BinaryOperatorKind.MOD, BinaryOperatorKind.MUL},
+                {BinaryOperatorKind.LE, BinaryOperatorKind.LE}
         };
 
     }
@@ -79,8 +79,8 @@ public class MethodChangeOperatorProcessorTest {
         for (int i = 0; i < binaryOperatorKind.length; i++) {
             int j = 0;
             ctBinaryOperator.setKind(binaryOperatorKind[i][0]);
-            methodChangeOperatorProcessor.process(changeOp);
-            List<CtClass> ctClassList = methodChangeOperatorProcessor.getCtClassList();
+            process.process(changeOp);
+            List<CtClass> ctClassList = process.getCtClasses();
             Assert.assertTrue("List must contains more than one element", ctClassList.size()>1);
             for (CtClass c : ctClassList) {
 
@@ -92,6 +92,42 @@ public class MethodChangeOperatorProcessorTest {
 
         }
     }
+
+    @Test
+    public void MethodChangeUnaryTest() {
+        CtClass changeOp = new CtClassImpl();
+        changeOp.setSimpleName("ChangeOp");
+        changeOp.addModifier(ModifierKind.PUBLIC);
+        CtMethod ctMethod = new CtMethodImpl();
+        CtBlock ctBlock = new CtBlockImpl();
+
+
+
+        CtLocalVariable variable = new CtLocalVariableImpl<Integer>().setSimpleName("x");
+        variable.setType(new CtTypeReferenceImpl().setSimpleName("int"));
+
+
+        variable.setAssignment(new CtLiteralImpl<Integer>().setValue(4));
+        ctBlock.addStatement(variable);
+
+
+        ctMethod.setSimpleName("changeOpMethod");
+        ctMethod.addModifier(ModifierKind.PUBLIC);
+
+        CtTypeReference ctTypeReference = new CtTypeReferenceImpl();
+        ctTypeReference.setSimpleName("void");
+        ctMethod.setType(ctTypeReference);
+
+        ctMethod.setBody(ctBlock);
+        changeOp.addMethod(ctMethod);
+
+        process.process(changeOp);
+        Assert.assertTrue("Size list must be one", process.getCtClasses().size() == 1);
+
+
+    }
+
+
 }
 
 
