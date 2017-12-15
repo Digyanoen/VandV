@@ -15,5 +15,10 @@ Importer le projet dans un éditeur (IntelliJ ou eclipse)
 Le configurer afin de passer en paramètre le chemin du dossier cible
 Lancer le projet
 
+# Extension
 
+Ce projet a les extensions suivantes :
+* Intégration continue avec Travis
+* Génération d'un rapport à la fin de l'éxecution de l'outil
+* Nombre de mutants supérieur que le minimmum demandé
 

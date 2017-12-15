@@ -95,7 +95,7 @@ public class Result {
 
         out.println("<!DOCTYPE html>");
         out.println("<meta charset=\"UTF-8\">");
-        out.println("<script type=\"text/javascript\" src=\"hide.js\"></script>)");
+        out.println("<script type=\"text/javascript\" src=\"TestSuit/resources/hide.js\"></script>");
     }
 
     public static void deleteReport(){
