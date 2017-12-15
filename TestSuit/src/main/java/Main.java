@@ -66,6 +66,7 @@ public class Main {
 //        }
 
         // Launch a mutator
+        long time = System.currentTimeMillis();
         MethodChangeOperatorProcessor classProc = new MethodChangeOperatorProcessor();
         clazzes.stream().forEach(m -> {
                     classProc.process(m);
@@ -96,6 +97,8 @@ public class Main {
 
         );
 
+        long time2 = System.currentTimeMillis();
+        System.out.println(time2-time);
         Result.closeReport();
 
 

@@ -34,7 +34,7 @@ public class MethodBooleanProcessor extends MyProcess{
             ((CtMethod) m).setBody(returnTrue);
             ctClass.replace(ctClassCloned);
             ctClassList.add(ctClassCloned.clone());
-            Mutant mutant = new Mutant(ctClass.getSimpleName(), (CtMethod) m, returnTrue, "ReplaceBooleanBody", 1);
+            Mutant mutant = new Mutant(ctClass.getSimpleName(), (CtMethod) m, returnTrue, "ReplaceBooleanBody", ((CtMethod) m).getPosition().getLine());
             Result.showResults(mutant);
             ctClassCloned.replace(ctClass);
 

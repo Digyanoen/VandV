@@ -28,7 +28,7 @@ public class MethodVoidProcessor extends MyProcess{
                            CtBlock body = ((CtMethod)method).getBody();
                            CtBlock voidBody = ctClass.getFactory().createBlock();
                            ((CtMethod)method).setBody(voidBody);
-                           Mutant m = new Mutant(ctClass.getSimpleName(), (CtMethod) method, voidBody, "DeleteVoidBody", 1);
+                           Mutant m = new Mutant(ctClass.getSimpleName(), (CtMethod) method, voidBody, "DeleteVoidBody", ((CtMethod) method).getPosition().getLine());
                            ctClass.replace(ctClassCloned);
                            Result.showResults(m);
                            ctClasses.add(ctClassCloned.clone());

@@ -72,6 +72,7 @@ public class MethodChangeIfOperatorProcessor extends MyProcess {
                                                 break;
 
                                         }
+
                                         ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(newOp);
                                         ctClass.replace(ctClassCloned);
 
