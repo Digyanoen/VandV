@@ -4,6 +4,7 @@ import com.sun.org.apache.xalan.internal.xsltc.compiler.CompilerException;
 import org.junit.runner.notification.Failure;
 import processors.Mutant;
 import spoon.reflect.code.CtStatement;
+import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtMethod;
 
 import java.io.File;
@@ -16,7 +17,7 @@ public class Result {
 
     public static void showResults(Mutant m) {
         System.out.println("Nom du mutant : "+m.getMutantName());
-        System.out.println("Mutation effectuée dans la méthode : "+m.getMethod().getSimpleName());
+        System.out.println("Mutation effectuée dans la méthode : "+((CtClass) m.getMethod().getParent()).getQualifiedName()+ "." +m.getMethod().getSimpleName());
         System.out.println("Ligne de la modification : "+m.getLine());
         System.out.println("Modification effectué :"+m.getStatement());
 
@@ -37,7 +38,7 @@ public class Result {
             total+=1;
             System.out.println("Nombre de mutant : "+total);
             System.out.println("Nombre de mutant tués :"+killed);
-            System.out.println("Ratio : "+ (killed/total));
+            System.out.println("Ratio : "+ (((float)killed)/total));
         } catch (CompilerException e) {
             e.printStackTrace();
         }

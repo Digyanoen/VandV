@@ -100,6 +100,16 @@ public class TestUnitHandler {
     }
 
     public static void removeJunkTest() throws CompilerException {
+
+        for (CtMethod ignored : launcher.getModel().getElements(new TypeFilter<CtMethod>(CtMethod.class) {
+            @Override
+            public boolean matches(CtMethod element) {
+                return super.matches(element) && (element.getAnnotation(Ignore.class) != null);
+            }
+        })) {
+            ((CtType) ignored.getParent()).removeMethod(ignored);
+        }
+
         List<Failure> methodsToJunk = getFailures();
 
         //TODO Améliorer la suppression des tests
@@ -114,15 +124,6 @@ public class TestUnitHandler {
                     elm.removeMethod(elm.getMethod(junk.getDescription().getMethodName()));
                 }
             }
-        }
-
-        for (CtMethod ignored : launcher.getModel().getElements(new TypeFilter<CtMethod>(CtMethod.class) {
-            @Override
-            public boolean matches(CtMethod element) {
-                return super.matches(element) && (element.getAnnotation(Ignore.class) != null);
-            }
-        })) {
-            ((CtType) ignored.getParent()).removeMethod(ignored);
         }
     }
 
