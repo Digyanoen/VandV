@@ -1,5 +1,6 @@
 package Testing;
 
+import com.sun.org.apache.regexp.internal.RE;
 import com.sun.org.apache.xalan.internal.xsltc.compiler.CompilerException;
 import org.junit.runner.notification.Failure;
 import processors.Mutant;
@@ -88,14 +89,31 @@ public class Result {
     }
     private static void initialize(){
         try {
+            ClassLoader classLoader = Result.class.getClassLoader();
+            InputStream resource = classLoader.getResourceAsStream("hide.js");
+            //InputStreamReader script = new InputStreamReader(resource);
             out = new PrintWriter(new BufferedWriter(new FileWriter(resume)));
+
+
+            out.println("<!DOCTYPE html>");
+            out.println("<meta charset=\"UTF-8\">");
+            out.println("<script>");
+
+
+            BufferedReader jsScript = new BufferedReader(new InputStreamReader(resource));
+            String line = jsScript.readLine();
+            while(line != null){
+                out.println(line);
+                line = jsScript.readLine();
+            }
+            jsScript.close();
+            out.println("</script>");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        out.println("<!DOCTYPE html>");
-        out.println("<meta charset=\"UTF-8\">");
-        out.println("<script type=\"text/javascript\" src=\"TestSuit/resources/hide.js\"></script>");
+        out.flush();
+
     }
 
     public static void deleteReport(){
