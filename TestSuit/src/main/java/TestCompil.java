@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TestCompil {
-    private static Launcher launcher;
     private static URLClassLoader classLoader;
     private static JUnitCore junit;
 
@@ -23,7 +22,11 @@ public class TestCompil {
 
         File dest = new File("dest/");
 
-        deleteFiles(dest);
+        try {
+            deleteFiles(dest);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         try {
             FileUtils.copyDirectory(src, dest);
@@ -31,15 +34,18 @@ public class TestCompil {
             e.printStackTrace();
         }
 
-        deleteFiles(new File("dest/src/main/java"));
+        try {
+            deleteFiles(new File("dest/src/main/java"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 //        launcher = new MavenLauncher(".", MavenLauncher.SOURCE_TYPE.ALL_SOURCE);
-        launcher = new Launcher();
+        Launcher launcher = new Launcher();
         launcher.getEnvironment().setAutoImports(true);
         launcher.getEnvironment().setNoClasspath(true);
 
         launcher.addInputResource(args[0] + "/src/main/java");
-        launcher.getModelBuilder().getSourceOutputDirectory();
         launcher.setSourceOutputDirectory("dest/src/main/java");
         launcher.buildModel();
         launcher.prettyprint();
@@ -47,34 +53,15 @@ public class TestCompil {
         String[]command ={"mvn","compile"};
         ProcessBuilder ps=new ProcessBuilder(command);
         ps.redirectErrorStream(true);
-        ps.directory(dest);//args[0]));
+        ps.directory(dest);
 
-        Process process = null;
+        Process process;
         try {
             process = ps.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        List<String> stdout = new ArrayList<>();
-        BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        String line;
-        try {
-            while ((line = in.readLine()) != null) {
-                stdout.add(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
+            BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
             process.waitFor();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        try {
             in.close();
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
 
@@ -106,7 +93,7 @@ public class TestCompil {
                 e.printStackTrace();
             }
 
-            List<Failure> result = new ArrayList();
+            List<Failure> result = new ArrayList<>();
             result.addAll(junit.run(cls).getFailures());
 
             for (Failure f : result) {
@@ -119,8 +106,12 @@ public class TestCompil {
     private static List<String> getTests(File classRoot) {
         List<String> res = new ArrayList<>();
 
-        for (File file : classRoot.listFiles()) {
-            res.addAll(getTests(file,""));
+        File[] files = classRoot.listFiles();
+
+        if (files != null) {
+            for (File file : files) {
+                res.addAll(getTests(file, ""));
+            }
         }
 
         return res;
@@ -131,8 +122,11 @@ public class TestCompil {
         String name = dir.getName();
 
         if(dir.isDirectory()){
-            for (File file : dir.listFiles()) {
-                res.addAll(getTests(file, pack + dir.getName() + "."));
+            File[] files = dir.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    res.addAll(getTests(file, pack + dir.getName() + "."));
+                }
             }
         }else if(dir.isFile() && name.endsWith(".class") && !name.contains("$")){
             res.add(pack + name.substring(0,name.length()-6));
@@ -141,12 +135,13 @@ public class TestCompil {
         return res;
     }
 
-    private static void deleteFiles(File file) {
-        if(file.isDirectory()) {
-            for (File child : file.listFiles()) {
+    private static void deleteFiles(File file) throws IOException {
+        File [] children = file.listFiles();
+        if(children != null) {
+            for (File child : children) {
                 deleteFiles(child);
             }
         }
-        file.delete();
+        if(!file.delete()) throw new IOException();
     }
 }
