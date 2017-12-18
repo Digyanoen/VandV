@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Processor which replaces the body of a boolean method by true then false
  */
-public class MethodBooleanProcessor extends AbstractProcessor<CtClass> {
+public class MethodBooleanProcessor extends MyProcess{
     private List<CtClass> ctClassList;
 
     @Override
@@ -34,7 +34,7 @@ public class MethodBooleanProcessor extends AbstractProcessor<CtClass> {
             ((CtMethod) m).setBody(returnTrue);
             ctClass.replace(ctClassCloned);
             ctClassList.add(ctClassCloned.clone());
-            Mutant mutant = new Mutant((CtMethod) m, returnTrue, "ReplaceBooleanBody", 1);
+            Mutant mutant = new Mutant(ctClass.getSimpleName(), (CtMethod) m, returnTrue, "ReplaceBooleanBody", ((CtMethod) m).getPosition().getLine());
             Result.showResults(mutant);
             ctClassCloned.replace(ctClass);
 
@@ -49,8 +49,9 @@ public class MethodBooleanProcessor extends AbstractProcessor<CtClass> {
         });
     }
 
-    public List<CtClass> getCtClassList() {
+
+    @Override
+    public List<CtClass> getCtClasses() {
         return ctClassList;
     }
-
 }

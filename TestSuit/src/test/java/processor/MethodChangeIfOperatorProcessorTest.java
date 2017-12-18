@@ -9,35 +9,39 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import processors.MethodChangeIfOperatorProcessor;
+import processors.MethodChangeOperatorProcessor;
 import spoon.reflect.code.*;
 import spoon.reflect.declaration.CtClass;
+import spoon.reflect.declaration.CtInterface;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.ModifierKind;
 import spoon.reflect.reference.CtTypeReference;
 import spoon.support.reflect.code.*;
 import spoon.support.reflect.declaration.CtClassImpl;
+import spoon.support.reflect.declaration.CtInterfaceImpl;
 import spoon.support.reflect.declaration.CtMethodImpl;
 import spoon.support.reflect.reference.CtTypeReferenceImpl;
 
 import java.util.*;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Result.class)
-public class MethodChangeIfOperatorProcessorTest {
+public class MethodChangeIfOperatorProcessorTest extends AbstractTest{
 
-    private MethodChangeIfOperatorProcessor methodChangeIfOperatorProcessor;
 
     public BinaryOperatorKind[][] binaryOperatorKind;
 
 
     @Before
     public void init() {
-        methodChangeIfOperatorProcessor = new MethodChangeIfOperatorProcessor();
+        this.process = new MethodChangeIfOperatorProcessor();
         binaryOperatorKind = new BinaryOperatorKind[][]{
                 {BinaryOperatorKind.AND, BinaryOperatorKind.OR},
                 {BinaryOperatorKind.OR, BinaryOperatorKind.AND},
                 {BinaryOperatorKind.EQ, BinaryOperatorKind.NE},
+                {BinaryOperatorKind.NE, BinaryOperatorKind.EQ},
                 {BinaryOperatorKind.LE, BinaryOperatorKind.GT},
-                {BinaryOperatorKind.GT, BinaryOperatorKind.LE}
+                {BinaryOperatorKind.GT, BinaryOperatorKind.LE},
+                {BinaryOperatorKind.MUL, BinaryOperatorKind.MUL}
         };
 
     }
@@ -79,8 +83,8 @@ public class MethodChangeIfOperatorProcessorTest {
             int j = 0;
             condition.setKind(binaryOperatorKind[i][0]);
             ctIf.setCondition(condition);
-            methodChangeIfOperatorProcessor.process(changeAnd);
-            List<CtClass> ctClassList = methodChangeIfOperatorProcessor.getCtClassList();
+            ((MethodChangeIfOperatorProcessor) process).process(changeAnd);
+            List<CtClass> ctClassList = process.getCtClasses();
 
 
             for (CtClass c : ctClassList) {
@@ -125,11 +129,14 @@ public class MethodChangeIfOperatorProcessorTest {
         PowerMockito.mockStatic(Result.class);
         PowerMockito.doNothing().when(Result.class);
 
-        methodChangeIfOperatorProcessor.process(changeAnd);
-        for(CtClass c : methodChangeIfOperatorProcessor.getCtClassList()){
+        ((MethodChangeIfOperatorProcessor) process).process(changeAnd);
+        for(CtClass c : process.getCtClasses()){
             Assert.assertTrue("Operator is not",((CtUnaryOperator) ((CtIf) c.getMethod("changeAndMethod").getBody().getStatement(0)).getCondition()).getKind().equals(UnaryOperatorKind.NOT));
         }
     }
+
+
+
 
 
 

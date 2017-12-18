@@ -7,10 +7,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import processors.MethodVoidProcessor;
+import processors.Mutant;
 import spoon.reflect.code.CtBlock;
 import spoon.reflect.code.CtReturn;
 import spoon.reflect.code.CtStatement;
@@ -87,10 +89,11 @@ public class MethodVoidProcessorTest{
 
         PowerMockito.mockStatic(Result.class);
         PowerMockito.doNothing().when(Result.class);
+        CtBlock voidBody = removeClass.getFactory().createBlock();
         methodVoidProcessor.process(removeClass);
         Assert.assertTrue("Class must be the same", methodVoidProcessor.getCtClasses().get(0).equals(removeClass));
         for (CtClass c : methodVoidProcessor.getCtClasses().subList(1, methodVoidProcessor.getCtClasses().size())){
-            Assert.assertTrue("Body must be null", c.getMethod("removeBodyMethod").getBody() == null);
+            Assert.assertTrue("Body must be null", c.getMethod("removeBodyMethod").getBody().equals(voidBody));
         }
 
     }

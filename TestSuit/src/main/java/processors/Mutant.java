@@ -5,17 +5,19 @@ import spoon.reflect.declaration.CtMethod;
 
 public class Mutant {
 
+    private String className;
     private CtMethod method;
     private CtStatement statement;
     private String mutantName;
     private int line;
 
 
-    public Mutant(CtMethod method, CtStatement statement, String mutantName, int line) {
+    public Mutant(String simpleName, CtMethod method, CtStatement statement, String mutantName, int line) {
         this.method = method;
         this.statement = statement;
         this.mutantName = mutantName + "Mutant";
         this.line = line;
+        this.className = simpleName;
     }
 
 
@@ -49,5 +51,13 @@ public class Mutant {
 
     public void setLine(int line) {
         this.line = line;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
     }
 }

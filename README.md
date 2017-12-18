@@ -15,5 +15,13 @@ Importer le projet dans un éditeur (IntelliJ ou eclipse)
 Le configurer afin de passer en paramètre le chemin du dossier cible
 Lancer le projet
 
+# Extension
 
+Ce projet a les extensions suivantes :
+* Intégration continue avec Travis
+* Génération d'un rapport à la fin de l'éxecution de l'outil
+* Nombre de mutants supérieur que le minimmum demandé
 
+#Lancement du projet
+
+Le projet se lance avec la commande java -cp path/vers/lejar/duprojetcible -jar /target/TestSuit-1.0-SNAPSHOT-jar-with-dependencies.jar /chemin/vers/les/sourcesduprojetcible

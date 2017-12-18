@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Processor which changes boolean operators in an if statement
  */
-public class MethodChangeIfOperatorProcessor extends AbstractProcessor<CtClass> {
+public class MethodChangeIfOperatorProcessor extends MyProcess {
 
     private List<CtClass> ctClassList;
 
@@ -36,7 +36,7 @@ public class MethodChangeIfOperatorProcessor extends AbstractProcessor<CtClass> 
                                         ((CtIf) s).setCondition(operator);
                                         //TODO replace
                                         ctClass.replace(ctClassCloned);
-                                        mutant =new Mutant((CtMethod) m, s, "ChangeBooleanOperator", s.getPosition().getLine());
+                                        mutant =new Mutant(ctClass.getSimpleName(), (CtMethod) m, s, "ChangeBooleanOperator", s.getPosition().getLine());
                                         Result.showResults(mutant);
                                         ctClassCloned.replace(ctClass);
                                         ctClassList.add(ctClassCloned.clone());
@@ -72,10 +72,11 @@ public class MethodChangeIfOperatorProcessor extends AbstractProcessor<CtClass> 
                                                 break;
 
                                         }
+
                                         ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(newOp);
                                         ctClass.replace(ctClassCloned);
 
-                                        mutant =new Mutant((CtMethod) m, s, "ChangeBooleanOperator", s.getPosition().getLine());
+                                        mutant =new Mutant(ctClass.getSimpleName(), (CtMethod) m, s, "ChangeBooleanOperator", s.getPosition().getLine());
                                         Result.showResults(mutant);
                                         ctClassCloned.replace(ctClass);
                                         ctClassList.add(ctClassCloned.clone());
@@ -89,8 +90,8 @@ public class MethodChangeIfOperatorProcessor extends AbstractProcessor<CtClass> 
     }
 
 
-    public List<CtClass> getCtClassList() {
+    @Override
+    public List<CtClass> getCtClasses() {
         return ctClassList;
     }
-
 }

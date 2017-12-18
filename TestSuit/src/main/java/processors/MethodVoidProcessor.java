@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Processor which removes the body of a void method
  */
-public class MethodVoidProcessor extends AbstractProcessor<CtClass> {
+public class MethodVoidProcessor extends MyProcess{
 
     private List <CtClass> ctClasses;
     @Override
@@ -25,9 +25,10 @@ public class MethodVoidProcessor extends AbstractProcessor<CtClass> {
                .forEach(
                        method ->
                        {
-                           Mutant m = new Mutant((CtMethod) method, null, "DeleteVoidBody", 1);
                            CtBlock body = ((CtMethod)method).getBody();
-                           ((CtMethod)method).setBody(ctClass.getFactory().createBlock());
+                           CtBlock voidBody = ctClass.getFactory().createBlock();
+                           ((CtMethod)method).setBody(voidBody);
+                           Mutant m = new Mutant(ctClass.getSimpleName(), (CtMethod) method, voidBody, "DeleteVoidBody", ((CtMethod) method).getPosition().getLine());
                            ctClass.replace(ctClassCloned);
                            Result.showResults(m);
                            ctClasses.add(ctClassCloned.clone());
@@ -36,6 +37,7 @@ public class MethodVoidProcessor extends AbstractProcessor<CtClass> {
 
     }
 
+    @Override
     public List<CtClass> getCtClasses() {
         return ctClasses;
     }

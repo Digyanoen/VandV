@@ -3,16 +3,16 @@ package Testing;
 import com.sun.org.apache.xalan.internal.xsltc.compiler.CompilerException;
 import org.apache.log4j.Level;
 import org.junit.Ignore;
+import org.eclipse.jdt.core.compiler.CategorizedProblem;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.notification.Failure;
 import spoon.Launcher;
 import spoon.SpoonModelBuilder;
-import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtType;
-import spoon.reflect.factory.Factory;
 import spoon.reflect.visitor.filter.TypeFilter;
+import spoon.support.compiler.jdt.JDTBasedSpoonCompiler;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -69,6 +69,18 @@ public class TestUnitHandler {
         }
 
         return result;
+    }
+
+    public static void deleteSpoonDirectory() {
+        File spooned = new File("spooned-classes");
+        if(spooned.exists() && spooned.isDirectory()){
+            System.out.println("Testset");
+            System.out.println(spooned.getPath());
+            for(File f : spooned.listFiles()){
+                deleteFiles(f);
+            }
+            spooned.delete();
+        }
     }
 
     private static void compile() throws CompilerException {
@@ -157,5 +169,15 @@ public class TestUnitHandler {
     public static List<CtType> getTests() {
         return tests;
     }
+
+    private static void deleteFiles(File f){
+        if(f.isDirectory()){
+            for(File file : f.listFiles()){
+                deleteFiles(file);
+            }
+        }
+        f.delete();
+    }
+
 
 }

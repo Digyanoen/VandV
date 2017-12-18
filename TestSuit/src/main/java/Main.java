@@ -1,3 +1,4 @@
+import Testing.Result;
 import Testing.TestUnitHandler;
 import com.sun.org.apache.xalan.internal.xsltc.compiler.CompilerException;
 import org.apache.commons.io.FileUtils;
@@ -37,6 +38,8 @@ public class Main {
         if(args.length < 1){
             throw new IllegalArgumentException("Expected parameters : <source folder>");
         }
+        TestUnitHandler.deleteSpoonDirectory();
+        Result.deleteReport();
 
         //Récupère les dossiers de sources et de tests
         File src = new File(args[0]);
@@ -121,7 +124,9 @@ public class Main {
 //
 //        );
 
-        //root.getElements(new TypeFilter<CtClass>(CtClass.class)).stream().forEach(ctClass -> System.out.println(ctClass));
+        Result.closeReport();
+
+
     }
 
     private static void initLauncher(String inDir) {
