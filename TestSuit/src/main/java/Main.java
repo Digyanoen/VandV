@@ -1,32 +1,13 @@
 import Testing.Result;
 import Testing.TestUnitHandler;
-import com.sun.org.apache.xalan.internal.xsltc.compiler.CompilerException;
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
-import org.junit.runner.notification.Failure;
 import processors.MethodBooleanProcessor;
 import processors.MethodChangeIfOperatorProcessor;
 import processors.MethodChangeOperatorProcessor;
 import processors.MethodVoidProcessor;
 import spoon.Launcher;
-import spoon.SpoonModelBuilder;
-import spoon.reflect.CtModel;
-import spoon.reflect.declaration.CtClass;
-import spoon.reflect.declaration.CtMethod;
-import spoon.reflect.declaration.CtType;
-import spoon.reflect.factory.Factory;
-import spoon.reflect.visitor.filter.TypeFilter;
-import sun.rmi.runtime.Log;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
-
-import static org.junit.Assert.assertTrue;
 
 public class Main {
 
@@ -38,7 +19,7 @@ public class Main {
         if(args.length < 1){
             throw new IllegalArgumentException("Expected parameters : <source folder>");
         }
-        TestUnitHandler.deleteSpoonDirectory();
+
         Result.deleteReport();
 
         //Récupère les dossiers de sources et de tests
@@ -146,15 +127,15 @@ public class Main {
         launcher.buildModel();
         launcher.prettyprint();
     }
-
-    private static void printLines(String name, InputStream ins) throws Exception {
-        String line = null;
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(ins));
-        while ((line = in.readLine()) != null) {
-            System.out.println(name + " " + line);
-        }
-    }
+//
+//    private static void printLines(String name, InputStream ins) throws Exception {
+//        String line = null;
+//        BufferedReader in = new BufferedReader(
+//                new InputStreamReader(ins));
+//        while ((line = in.readLine()) != null) {
+//            System.out.println(name + " " + line);
+//        }
+//    }
 
     private static void deleteFiles(File file) throws IOException {
         File [] children = file.listFiles();

@@ -1,18 +1,9 @@
 package Testing;
 
 import com.sun.org.apache.xalan.internal.xsltc.compiler.CompilerException;
-import org.apache.log4j.Level;
-import org.junit.Ignore;
-import org.eclipse.jdt.core.compiler.CategorizedProblem;
-import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.notification.Failure;
-import spoon.Launcher;
-import spoon.SpoonModelBuilder;
-import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtType;
-import spoon.reflect.visitor.filter.TypeFilter;
-import spoon.support.compiler.jdt.JDTBasedSpoonCompiler;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -26,10 +17,6 @@ import java.util.List;
 
 public class TestUnitHandler {
 
-    private static Launcher launcher;
-    private static SpoonModelBuilder compiler;
-    private static List<CtType> tests;
-
     private static JUnitCore junit = new JUnitCore();
     public static File dest = new File("dest/"); //Dossier de destination
 
@@ -37,7 +24,7 @@ public class TestUnitHandler {
      * Récupère la liste des tests qui ont échoué
      * @return La liste d'échecs
      */
-    public static List<Failure> getFailures() throws CompilerException {
+    static List<Failure> getFailures() throws CompilerException {
 
         compile();
 
@@ -71,13 +58,18 @@ public class TestUnitHandler {
         return result;
     }
 
-    public static void deleteSpoonDirectory() {
+    public static void deleteSpoonDirectory() throws IOException {
         File spooned = new File("spooned-classes");
         if(spooned.exists() && spooned.isDirectory()){
             System.out.println("Testset");
             System.out.println(spooned.getPath());
-            for(File f : spooned.listFiles()){
-                deleteFiles(f);
+
+            File[] files = spooned.listFiles();
+
+            if (files != null) {
+                for(File f : files){
+                    deleteFiles(f);
+                }
             }
             spooned.delete();
         }
@@ -162,21 +154,14 @@ public class TestUnitHandler {
         return res;
     }
 
-    /**
-     * Récupère les tests du modèle
-     * @return La liste de tests
-     */
-    public static List<CtType> getTests() {
-        return tests;
-    }
-
-    private static void deleteFiles(File f){
-        if(f.isDirectory()){
-            for(File file : f.listFiles()){
-                deleteFiles(file);
+    private static void deleteFiles(File file) throws IOException {
+        File [] children = file.listFiles();
+        if(children != null) {
+            for (File child : children) {
+                deleteFiles(child);
             }
         }
-        f.delete();
+        if(!file.delete()) throw new IOException();
     }
 
 
