@@ -67,9 +67,6 @@ public class MethodBooleanProcessorTest {
         booleanMethod.setSimpleName("isSuperior");
         booleanClass.addTypeMember(booleanMethod);
         launcher = new Launcher();
-        TestUnitHandler.initialize(launcher);
-
-
     }
 
     
