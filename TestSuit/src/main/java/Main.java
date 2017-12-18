@@ -1,5 +1,6 @@
 import Testing.TestUnitHandler;
 import com.sun.org.apache.xalan.internal.xsltc.compiler.CompilerException;
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.junit.runner.notification.Failure;
 import processors.MethodBooleanProcessor;
@@ -38,22 +39,37 @@ public class Main {
         }
 
         //Récupère les dossiers de sources et de tests
-        File inDir = new File(args[0]);
+        File src = new File(args[0]);
 
-        //Initialise le Launcher
-        initLauncher(inDir);
+        //Création du dossier de destination
+        File dest = TestUnitHandler.dest;
 
-        //Retire les tests du projet qui sont ignorés ou qui échouent
+        //Suppression du dossier de destination et des potentiels fichiers présents
+        if(dest.exists()) {
+            try {
+                deleteFiles(dest);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        //Copie du dossier cible dans le dossier de destination et supprime les sources
         try {
-            TestUnitHandler.removeJunkTest();
-        } catch (CompilerException e) {
+            FileUtils.copyDirectory(src, dest);
+            deleteFiles(new File("dest/src/main/java"));
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
-        List<CtType> tests = TestUnitHandler.getTests();
+        //Initialise le Launcher
+        initLauncher(args[0]);
 
+        launcher.addProcessor(new MethodChangeOperatorProcessor());
+        launcher.addProcessor(new MethodBooleanProcessor());
+        launcher.addProcessor(new MethodChangeIfOperatorProcessor());
+        launcher.addProcessor(new MethodVoidProcessor());
 
-        CtModel root = launcher.getModel();
+        launcher.process();
 //
 //        List<CtMethod> meth = root.getElements(new TypeFilter<CtMethod>(CtMethod.class));
 //
@@ -62,12 +78,12 @@ public class Main {
 //            System.out.println("method: "+m.getSimpleName());
 //        }
 //
-        List<CtClass> clazzes = root.getElements(new TypeFilter<CtClass>(CtClass.class){
-            @Override
-            public boolean matches(CtClass element) {
-                return super.matches(element) && !tests.contains(element);
-            }
-        });
+//        List<CtClass> clazzes = root.getElements(new TypeFilter<CtClass>(CtClass.class){
+//            @Override
+//            public boolean matches(CtClass element) {
+//                return super.matches(element) && !tests.contains(element);
+//            }
+//        });
 //
 //        //list all classes of the model
 //        for(CtClass c : clazzes) {
@@ -75,51 +91,55 @@ public class Main {
 //        }
 
         // Launch a mutator
-        MethodChangeOperatorProcessor classProc = new MethodChangeOperatorProcessor();
-        clazzes.stream().forEach(m -> {
-                    classProc.process(m);
-                }
-
-
-        );
-        // Launch a mutator
-        MethodChangeIfOperatorProcessor classProc2 = new MethodChangeIfOperatorProcessor();
-        clazzes.stream().forEach(m -> {
-                    classProc2.process(m);
-                }
-
-
-        );
-        MethodBooleanProcessor classProc3 = new MethodBooleanProcessor();
-        clazzes.stream().forEach(m -> {
-                    classProc3.process(m);
-                }
-
-
-        );
-        MethodVoidProcessor classProc4 = new MethodVoidProcessor();
-        clazzes.stream().forEach(m -> {
-                    classProc4.process(m);
-                }
-
-
-        );
+//        MethodChangeOperatorProcessor classProc = new MethodChangeOperatorProcessor();
+//        clazzes.stream().forEach(m -> {
+//                    classProc.process(m);
+//                }
+//
+//
+//        );
+//        // Launch a mutator
+//        MethodChangeIfOperatorProcessor classProc2 = new MethodChangeIfOperatorProcessor();
+//        clazzes.stream().forEach(m -> {
+//                    classProc2.process(m);
+//                }
+//
+//
+//        );
+//        MethodBooleanProcessor classProc3 = new MethodBooleanProcessor();
+//        clazzes.stream().forEach(m -> {
+//                    classProc3.process(m);
+//                }
+//
+//
+//        );
+//        MethodVoidProcessor classProc4 = new MethodVoidProcessor();
+//        clazzes.stream().forEach(m -> {
+//                    classProc4.process(m);
+//                }
+//
+//
+//        );
 
         //root.getElements(new TypeFilter<CtClass>(CtClass.class)).stream().forEach(ctClass -> System.out.println(ctClass));
     }
 
-    private static void initLauncher(File inDir) {
+    private static void initLauncher(String inDir) {
 
         //Initialise le launcher principal
         launcher = new Launcher();
         launcher.getEnvironment().setAutoImports(true);
         launcher.getEnvironment().setNoClasspath(true);
 
-        //Ajoute les sources aux launchers et build les models
-        launcher.addInputResource(inDir.getPath());
-        launcher.buildModel();
+        //Ajoute les sources de la cible en ressource
+        launcher.addInputResource(inDir + "/src/main/java");
 
-        TestUnitHandler.initialize(launcher);
+        //Change la destination du prettyprint()
+        launcher.setSourceOutputDirectory("dest/src/main/java");
+
+        //Construit le modèle
+        launcher.buildModel();
+        launcher.prettyprint();
     }
 
     private static void printLines(String name, InputStream ins) throws Exception {
@@ -130,6 +150,18 @@ public class Main {
             System.out.println(name + " " + line);
         }
     }
+
+    private static void deleteFiles(File file) throws IOException {
+        File [] children = file.listFiles();
+        if(children != null) {
+            for (File child : children) {
+                deleteFiles(child);
+            }
+        }
+        if(!file.delete()) throw new IOException();
+    }
+
+
 
 //    @Test
 //    public void testGoodTestClassNames() throws Exception {

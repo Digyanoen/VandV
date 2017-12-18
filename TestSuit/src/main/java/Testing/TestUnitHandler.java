@@ -14,7 +14,10 @@ import spoon.reflect.declaration.CtType;
 import spoon.reflect.factory.Factory;
 import spoon.reflect.visitor.filter.TypeFilter;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -25,8 +28,10 @@ public class TestUnitHandler {
 
     private static Launcher launcher;
     private static SpoonModelBuilder compiler;
-    private static JUnitCore junit;
     private static List<CtType> tests;
+
+    private static JUnitCore junit = new JUnitCore();
+    public static File dest = new File("dest/"); //Dossier de destination
 
     /**
      * Récupère la liste des tests qui ont échoué
@@ -34,97 +39,115 @@ public class TestUnitHandler {
      */
     public static List<Failure> getFailures() throws CompilerException {
 
+        compile();
 
-        Launcher.LOGGER.setLevel(Level.DEBUG);
-        //Crée le compiler Spoon
-        compiler = launcher.createCompiler(launcher.getFactory());
-        if(!compiler.compile()){
-            Launcher.LOGGER.setLevel(Level.OFF);
-            throw new CompilerException("Spoon Compiler failed to compile the project.");
-        }
-        Launcher.LOGGER.setLevel(Level.OFF);
+        List<Failure> result = new ArrayList<>();
 
-        File classRoot = compiler.getBinaryOutputDirectory();
+        //Récupère le dossier des classes de tests
+        File classRoot = new File("dest/target/test-classes"); //TODO Confirmer le lieu de la compile Maven
 
-        List<Failure> result = new ArrayList<Failure>();
+        ClassLoader classLoader;
 
         //Initialise le ClassLoader
-        URLClassLoader classLoader = null;
         try {
             classLoader = URLClassLoader.newInstance(new URL[]{classRoot.toURI().toURL()});
+
+            //Lance les différents tests
+            for(String elm: getTests(classRoot)) {
+
+                Class<?> cls = null;
+                try {
+                    cls = classLoader.loadClass(elm);//elm.getQualifiedName());
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                result.addAll(junit.run(cls).getFailures());
+            }
         } catch (MalformedURLException e) {
             e.printStackTrace();
-        }
-
-        //Lance les différents tests et supprime les tests échouant
-        //Pour chaque classe de test
-        for(CtType elm: tests) {
-
-            //Convertie le CtType en Class
-            Class<?> cls = null;
-            try {
-                cls = classLoader.loadClass(elm.getQualifiedName());
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-
-            result.addAll(junit.run(cls).getFailures());
         }
 
         return result;
     }
 
-    /**
-     * Initialise le handler, à savoir le JUnitCore, le compiler Spoon et la liste des tests présents dans le modèle
-     * @param l launcher contenant le modèle du projet à tester
-     */
-    public static void initialize(Launcher l){
+    private static void compile() throws CompilerException {
+        String[]command ={"mvn","compile"};
+        ProcessBuilder ps=new ProcessBuilder(command);
+        ps.redirectErrorStream(true);
+        ps.directory(dest);
 
-        launcher = l;
-
-        //Initialise JUnit pour l'exécution des tests
-        junit = new JUnitCore();
-
-        //Récupère la liste des classes de test
-        tests = new ArrayList<CtType>();
-
-        for (CtMethod<?> meth : launcher.getModel().getRootPackage().getElements(new TypeFilter<CtMethod>(CtMethod.class) {
-            @Override
-            public boolean matches(CtMethod element) {
-                return super.matches(element) && (element.getAnnotation(Test.class) != null);
-            }
-        })) {
-            CtType c = (CtType)meth.getParent();
-            if(!tests.contains(c))tests.add(c);
+        Process process;
+        try {
+            process = ps.start();
+            BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            process.waitFor();
+            in.close();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            throw new CompilerException("Fail to compile");
         }
     }
 
-    public static void removeJunkTest() throws CompilerException {
+//    public static void removeJunkTest() throws CompilerException {
+//
+//        for (CtMethod ignored : launcher.getModel().getElements(new TypeFilter<CtMethod>(CtMethod.class) {
+//            @Override
+//            public boolean matches(CtMethod element) {
+//                return super.matches(element) && (element.getAnnotation(Ignore.class) != null);
+//            }
+//        })) {
+//            ((CtType) ignored.getParent()).removeMethod(ignored);
+//        }
+//
+//        List<Failure> methodsToJunk = getFailures();
+//
+//        //TODO Améliorer la suppression des tests
+//        //Lance les différents tests et supprime les tests échouant
+//        //Pour chaque classe de test
+//        for(CtType elm: tests) {
+//
+//            //Pour chaque échec supprime le test du modèle
+//            for (Failure junk : methodsToJunk) {
+//                System.out.println(junk.getDescription().getClassName());
+//                if(junk.getDescription().getClassName().equals(elm.getQualifiedName())) { //TODO Vérifier le cas des classes de même nom
+//                    elm.removeMethod(elm.getMethod(junk.getDescription().getMethodName()));
+//                }
+//            }
+//        }
+//    }
 
-        for (CtMethod ignored : launcher.getModel().getElements(new TypeFilter<CtMethod>(CtMethod.class) {
-            @Override
-            public boolean matches(CtMethod element) {
-                return super.matches(element) && (element.getAnnotation(Ignore.class) != null);
+
+    private static List<String> getTests(File classRoot) {
+        List<String> res = new ArrayList<>();
+
+        File[] files = classRoot.listFiles();
+
+        if (files != null) {
+            for (File file : files) {
+                res.addAll(getTests(file, ""));
             }
-        })) {
-            ((CtType) ignored.getParent()).removeMethod(ignored);
         }
 
-        List<Failure> methodsToJunk = getFailures();
+        return res;
+    }
 
-        //TODO Améliorer la suppression des tests
-        //Lance les différents tests et supprime les tests échouant
-        //Pour chaque classe de test
-        for(CtType elm: tests) {
+    private static List<String> getTests(File dir, String pack) {
+        List<String> res = new ArrayList<>();
+        String name = dir.getName();
 
-            //Pour chaque échec supprime le test du modèle
-            for (Failure junk : methodsToJunk) {
-                System.out.println(junk.getDescription().getClassName());
-                if(junk.getDescription().getClassName().equals(elm.getQualifiedName())) { //TODO Vérifier le cas des classes de même nom
-                    elm.removeMethod(elm.getMethod(junk.getDescription().getMethodName()));
+        if(dir.isDirectory()){
+            File[] files = dir.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    res.addAll(getTests(file, pack + dir.getName() + "."));
                 }
             }
+        }else if(dir.isFile() && name.endsWith(".class") && !name.contains("$")){
+            res.add(pack + name.substring(0,name.length()-6));
         }
+
+        return res;
     }
 
     /**

@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TestCompil {
-    private static URLClassLoader classLoader;
     private static JUnitCore junit;
 
     public static void main(String[] args){ //TODO Vérifier qu'il y a bien un pom.xml
@@ -22,10 +21,12 @@ public class TestCompil {
 
         File dest = new File("dest/");
 
-        try {
-            deleteFiles(dest);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(dest.exists()) {
+            try {
+                deleteFiles(dest);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         try {
@@ -67,38 +68,39 @@ public class TestCompil {
 
         File classRoot = new File("dest/target/test-classes"); //TODO Confirmer le lieu de la compile Maven
 
-        //Initialise le ClassLoader
-        try {
-            classLoader = URLClassLoader.newInstance(new URL[]{classRoot.toURI().toURL()});
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
 
         runTest(classRoot);
     }
 
     private static void runTest(File classRoot) {
 
-        //Lance les différents tests et supprime les tests échouant
-        //Pour chaque classe de test
-        for(String elm: getTests(classRoot)) {
+        ClassLoader classLoader;
 
-            System.out.println(elm);
+        //Initialise le ClassLoader
+        try {
+            classLoader = URLClassLoader.newInstance(new URL[]{classRoot.toURI().toURL()});
 
-            //Convertie le CtType en Class
-            Class<?> cls = null;
-            try {
-                cls = classLoader.loadClass(elm);//elm.getQualifiedName());
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+            //Lance les différents tests et supprime les tests échouant
+            //Pour chaque classe de test
+            for(String elm: getTests(classRoot)) {
+
+                //Convertie le CtType en Class
+                Class<?> cls = null;
+                try {
+                    cls = classLoader.loadClass(elm);//elm.getQualifiedName());
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                List<Failure> result = new ArrayList<>();
+                result.addAll(junit.run(cls).getFailures());
+
+                for (Failure f : result) {
+                    System.out.println("fail : " +f.getDescription().getMethodName());
+                }
             }
-
-            List<Failure> result = new ArrayList<>();
-            result.addAll(junit.run(cls).getFailures());
-
-            for (Failure f : result) {
-                System.out.println("fail : " +f.getDescription().getMethodName());
-            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
         }
 
     }
@@ -142,6 +144,6 @@ public class TestCompil {
                 deleteFiles(child);
             }
         }
-        if(!file.delete()) throw new IOException();
+        if(!file.delete()) throw new IOException("Unable to delete " + file.getName());
     }
 }
