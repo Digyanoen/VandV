@@ -3,6 +3,7 @@ package Testing;
 import com.sun.org.apache.xalan.internal.xsltc.compiler.CompilerException;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.notification.Failure;
+import spoon.Launcher;
 import spoon.reflect.declaration.CtType;
 
 import java.io.BufferedReader;
@@ -18,7 +19,9 @@ import java.util.List;
 public class TestUnitHandler {
 
     private static JUnitCore junit = new JUnitCore();
+    private static ClassLoader classLoader;
     public static File dest = new File("dest/"); //Dossier de destination
+    private static Launcher launcher;
 
     /**
      * Récupère la liste des tests qui ont échoué
@@ -32,8 +35,6 @@ public class TestUnitHandler {
 
         //Récupère le dossier des classes de tests
         File classRoot = new File("dest/target/test-classes"); //TODO Confirmer le lieu de la compile Maven
-
-        ClassLoader classLoader;
 
         //Initialise le ClassLoader
         try {
@@ -76,7 +77,15 @@ public class TestUnitHandler {
     }
 
     private static void compile() throws CompilerException {
-        String[]command ={"mvn","compile"};
+        try {
+            deleteFiles(new File("dest/src/main/java"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        launcher.prettyprint();
+
+        String[]command ={"mvn","test"};
         ProcessBuilder ps=new ProcessBuilder(command);
         ps.redirectErrorStream(true);
         ps.directory(dest);
@@ -165,4 +174,7 @@ public class TestUnitHandler {
     }
 
 
+    public static void initialize(Launcher l) {
+        launcher = l;
+    }
 }

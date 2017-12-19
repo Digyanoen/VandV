@@ -40,7 +40,6 @@ public class Main {
         //Copie du dossier cible dans le dossier de destination et supprime les sources
         try {
             FileUtils.copyDirectory(src, dest);
-            deleteFiles(new File("dest/src/main/java"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -48,10 +47,10 @@ public class Main {
         //Initialise le Launcher
         initLauncher(args[0]);
 
-        launcher.addProcessor(new MethodChangeOperatorProcessor());
         launcher.addProcessor(new MethodBooleanProcessor());
-        launcher.addProcessor(new MethodChangeIfOperatorProcessor());
-        launcher.addProcessor(new MethodVoidProcessor());
+//        launcher.addProcessor(new MethodChangeOperatorProcessor());
+//        launcher.addProcessor(new MethodChangeIfOperatorProcessor());
+//        launcher.addProcessor(new MethodVoidProcessor());
 
         launcher.process();
 //
@@ -125,7 +124,8 @@ public class Main {
 
         //Construit le modèle
         launcher.buildModel();
-        launcher.prettyprint();
+
+        TestUnitHandler.initialize(launcher);
     }
 //
 //    private static void printLines(String name, InputStream ins) throws Exception {
