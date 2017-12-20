@@ -2,6 +2,7 @@ package Testing;
 
 import com.sun.org.apache.regexp.internal.RE;
 import com.sun.org.apache.xalan.internal.xsltc.compiler.CompilerException;
+import net.sourceforge.cobertura.CoverageIgnore;
 import org.junit.runner.notification.Failure;
 import processors.Mutant;
 
@@ -14,7 +15,6 @@ public class Result {
     private static File resume = new File("report.html");
     private static PrintWriter out;
     private static boolean initialized = false;
-
 
 
 
@@ -87,6 +87,8 @@ public class Result {
         out.println("</ul>");
         out.close();
     }
+
+    @CoverageIgnore
     private static void initialize(){
         try {
             ClassLoader classLoader = Result.class.getClassLoader();
