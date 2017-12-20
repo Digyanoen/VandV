@@ -9,6 +9,5 @@ import java.util.List;
 
 public abstract class MyProcess extends AbstractProcessor<CtClass> {
     public abstract List<CtClass> getCtClasses();
-    public static Result result = new Result();
 
 }

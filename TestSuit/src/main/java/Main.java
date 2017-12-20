@@ -39,7 +39,9 @@ public class Main {
 
         //Copie du dossier cible dans le dossier de destination et supprime les sources
         try {
+            System.out.println("dest "+dest +" src "+src);
             FileUtils.copyDirectory(src, dest);
+            deleteFiles(new File("dest/src/main/java"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -47,62 +49,12 @@ public class Main {
         //Initialise le Launcher
         initLauncher(args[0]);
 
+        launcher.addProcessor(new MethodChangeOperatorProcessor());
         launcher.addProcessor(new MethodBooleanProcessor());
-//        launcher.addProcessor(new MethodChangeOperatorProcessor());
-//        launcher.addProcessor(new MethodChangeIfOperatorProcessor());
-//        launcher.addProcessor(new MethodVoidProcessor());
+        launcher.addProcessor(new MethodChangeIfOperatorProcessor());
+        launcher.addProcessor(new MethodVoidProcessor());
 
         launcher.process();
-//
-//        List<CtMethod> meth = root.getElements(new TypeFilter<CtMethod>(CtMethod.class));
-//
-//        //list all classes of the model
-//        for(CtMethod m : meth) {
-//            System.out.println("method: "+m.getSimpleName());
-//        }
-//
-//        List<CtClass> clazzes = root.getElements(new TypeFilter<CtClass>(CtClass.class){
-//            @Override
-//            public boolean matches(CtClass element) {
-//                return super.matches(element) && !tests.contains(element);
-//            }
-//        });
-//
-//        //list all classes of the model
-//        for(CtClass c : clazzes) {
-//            System.out.println("class: "+c.getQualifiedName());
-//        }
-
-        // Launch a mutator
-//        MethodChangeOperatorProcessor classProc = new MethodChangeOperatorProcessor();
-//        clazzes.stream().forEach(m -> {
-//                    classProc.process(m);
-//                }
-//
-//
-//        );
-//        // Launch a mutator
-//        MethodChangeIfOperatorProcessor classProc2 = new MethodChangeIfOperatorProcessor();
-//        clazzes.stream().forEach(m -> {
-//                    classProc2.process(m);
-//                }
-//
-//
-//        );
-//        MethodBooleanProcessor classProc3 = new MethodBooleanProcessor();
-//        clazzes.stream().forEach(m -> {
-//                    classProc3.process(m);
-//                }
-//
-//
-//        );
-//        MethodVoidProcessor classProc4 = new MethodVoidProcessor();
-//        clazzes.stream().forEach(m -> {
-//                    classProc4.process(m);
-//                }
-//
-//
-//        );
 
         Result.closeReport();
 
@@ -124,18 +76,8 @@ public class Main {
 
         //Construit le modèle
         launcher.buildModel();
-
-        TestUnitHandler.initialize(launcher);
+        launcher.prettyprint();
     }
-//
-//    private static void printLines(String name, InputStream ins) throws Exception {
-//        String line = null;
-//        BufferedReader in = new BufferedReader(
-//                new InputStreamReader(ins));
-//        while ((line = in.readLine()) != null) {
-//            System.out.println(name + " " + line);
-//        }
-//    }
 
     private static void deleteFiles(File file) throws IOException {
         File [] children = file.listFiles();

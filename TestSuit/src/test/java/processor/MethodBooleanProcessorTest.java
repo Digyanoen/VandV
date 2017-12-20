@@ -66,8 +66,6 @@ public class MethodBooleanProcessorTest {
         booleanMethod.setType(new CtTypeReferenceImpl().setSimpleName("boolean"));
         booleanMethod.setSimpleName("isSuperior");
         booleanClass.addTypeMember(booleanMethod);
-        launcher = new Launcher();
-        TestUnitHandler.initialize(launcher);
     }
 
     
@@ -75,7 +73,6 @@ public class MethodBooleanProcessorTest {
 
     @Test
     public void processBooleanTest(){
-        launcher.addProcessor(methodBooleanProcessor);
         PowerMockito.mockStatic(Result.class);
         PowerMockito.doNothing().when(Result.class);
 

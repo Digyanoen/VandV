@@ -14,6 +14,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TestUnitHandler {
@@ -23,11 +24,14 @@ public class TestUnitHandler {
     public static File dest = new File("dest/"); //Dossier de destination
     private static Launcher launcher;
 
+
+
     /**
      * Récupère la liste des tests qui ont échoué
      * @return La liste d'échecs
      */
-    static List<Failure> getFailures() throws CompilerException {
+   public static List<Failure> getFailures() throws CompilerException {
+
 
         compile();
 
@@ -46,11 +50,11 @@ public class TestUnitHandler {
                 Class<?> cls = null;
                 try {
                     cls = classLoader.loadClass(elm);//elm.getQualifiedName());
+                    result.addAll(junit.run(cls).getFailures());
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 }
 
-                result.addAll(junit.run(cls).getFailures());
             }
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -62,12 +66,11 @@ public class TestUnitHandler {
     public static void deleteSpoonDirectory() throws IOException {
         File spooned = new File("spooned-classes");
         if(spooned.exists() && spooned.isDirectory()){
-            System.out.println("Testset");
-            System.out.println(spooned.getPath());
 
             File[] files = spooned.listFiles();
 
-            if (files != null) {
+            if (files.length>0) {
+                System.out.println(files.length);
                 for(File f : files){
                     deleteFiles(f);
                 }
@@ -84,7 +87,7 @@ public class TestUnitHandler {
         }
 
         launcher.prettyprint();
-
+        System.out.println("coucou");
         String[]command ={"mvn","test"};
         ProcessBuilder ps=new ProcessBuilder(command);
         ps.redirectErrorStream(true);
@@ -101,34 +104,6 @@ public class TestUnitHandler {
             throw new CompilerException("Fail to compile");
         }
     }
-
-//    public static void removeJunkTest() throws CompilerException {
-//
-//        for (CtMethod ignored : launcher.getModel().getElements(new TypeFilter<CtMethod>(CtMethod.class) {
-//            @Override
-//            public boolean matches(CtMethod element) {
-//                return super.matches(element) && (element.getAnnotation(Ignore.class) != null);
-//            }
-//        })) {
-//            ((CtType) ignored.getParent()).removeMethod(ignored);
-//        }
-//
-//        List<Failure> methodsToJunk = getFailures();
-//
-//        //TODO Améliorer la suppression des tests
-//        //Lance les différents tests et supprime les tests échouant
-//        //Pour chaque classe de test
-//        for(CtType elm: tests) {
-//
-//            //Pour chaque échec supprime le test du modèle
-//            for (Failure junk : methodsToJunk) {
-//                System.out.println(junk.getDescription().getClassName());
-//                if(junk.getDescription().getClassName().equals(elm.getQualifiedName())) { //TODO Vérifier le cas des classes de même nom
-//                    elm.removeMethod(elm.getMethod(junk.getDescription().getMethodName()));
-//                }
-//            }
-//        }
-//    }
 
 
     private static List<String> getTests(File classRoot) {
