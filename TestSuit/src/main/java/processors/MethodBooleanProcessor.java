@@ -6,6 +6,7 @@ import spoon.reflect.code.CtBlock;
 import spoon.reflect.code.CtReturn;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtMethod;
+import spoon.reflect.declaration.CtType;
 import spoon.support.reflect.code.CtLiteralImpl;
 import spoon.support.reflect.code.CtReturnImpl;
 
