@@ -48,9 +48,9 @@ public class Main {
         initLauncher(args[0]);
 
         launcher.addProcessor(new MethodBooleanProcessor());
-//        launcher.addProcessor(new MethodChangeOperatorProcessor());
-//        launcher.addProcessor(new MethodChangeIfOperatorProcessor());
-//        launcher.addProcessor(new MethodVoidProcessor());
+        launcher.addProcessor(new MethodChangeOperatorProcessor());
+        launcher.addProcessor(new MethodChangeIfOperatorProcessor());
+        launcher.addProcessor(new MethodVoidProcessor());
 
         launcher.process();
 //

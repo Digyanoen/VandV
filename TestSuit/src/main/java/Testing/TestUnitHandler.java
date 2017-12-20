@@ -1,11 +1,19 @@
 package Testing;
 
 import com.sun.org.apache.xalan.internal.xsltc.compiler.CompilerException;
+import com.sun.tools.javac.main.JavaCompiler;
+import com.sun.tools.javac.util.Context;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.notification.Failure;
 import spoon.Launcher;
+import spoon.compiler.Environment;
+import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtType;
+import spoon.reflect.factory.Factory;
+import spoon.reflect.visitor.DefaultJavaPrettyPrinter;
+import spoon.support.JavaOutputProcessor;
 
+import javax.tools.JavaFileObject;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +30,7 @@ public class TestUnitHandler {
     private static ClassLoader classLoader;
     public static File dest = new File("dest/"); //Dossier de destination
     private static Launcher launcher;
+    private static List<Class<?>> clazzes;
 
     /**
      * Récupère la liste des tests qui ont échoué
@@ -33,47 +42,33 @@ public class TestUnitHandler {
 
         List<Failure> result = new ArrayList<>();
 
-        //Récupère le dossier des classes de tests
-        File classRoot = new File("dest/target/test-classes"); //TODO Confirmer le lieu de la compile Maven
+//        //Récupère le dossier des classes de tests
+//        File classRoot = new File("dest/target/test-classes"); //TODO Confirmer le lieu de la compile Maven
+//
+//        //Initialise le ClassLoader
+//        try {
+//            if (classLoader == null) classLoader = URLClassLoader.newInstance(new URL[]{classRoot.toURI().toURL()});
+//            //Lance les différents tests
+//            for(String elm: getTests(classRoot)) {
+//
+//                Class<?> cls = null;
+//                try {
+//                    cls = classLoader.loadClass(elm);//elm.getQualifiedName());
+//                } catch (ClassNotFoundException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                result.addAll(junit.run(cls).getFailures());
+//            }
+//        } catch (MalformedURLException e) {
+//            e.printStackTrace();
+//        }
 
-        //Initialise le ClassLoader
-        try {
-            classLoader = URLClassLoader.newInstance(new URL[]{classRoot.toURI().toURL()});
-
-            //Lance les différents tests
-            for(String elm: getTests(classRoot)) {
-
-                Class<?> cls = null;
-                try {
-                    cls = classLoader.loadClass(elm);//elm.getQualifiedName());
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-
-                result.addAll(junit.run(cls).getFailures());
-            }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
+        for (Class<?> clazz : clazzes) {
+            result.addAll(junit.run(clazz).getFailures());
         }
 
         return result;
-    }
-
-    public static void deleteSpoonDirectory() throws IOException {
-        File spooned = new File("spooned-classes");
-        if(spooned.exists() && spooned.isDirectory()){
-            System.out.println("Testset");
-            System.out.println(spooned.getPath());
-
-            File[] files = spooned.listFiles();
-
-            if (files != null) {
-                for(File f : files){
-                    deleteFiles(f);
-                }
-            }
-            spooned.delete();
-        }
     }
 
     private static void compile() throws CompilerException {
@@ -85,7 +80,7 @@ public class TestUnitHandler {
 
         launcher.prettyprint();
 
-        String[]command ={"mvn","test"};
+        String[]command ={"mvn","compile"};
         ProcessBuilder ps=new ProcessBuilder(command);
         ps.redirectErrorStream(true);
         ps.directory(dest);
@@ -175,6 +170,62 @@ public class TestUnitHandler {
 
 
     public static void initialize(Launcher l) {
-        launcher = l;
+        launcher = l;//Récupère le dossier des classes de tests
+
+        completeCompile();
+
+        File classRoot = new File("dest/target/test-classes"); //TODO Confirmer le lieu de la compile Maven
+
+        clazzes = new ArrayList<>();
+
+        //Initialise le ClassLoader
+        try {
+            if (classLoader == null) classLoader = URLClassLoader.newInstance(new URL[]{classRoot.toURI().toURL()});
+            //Lance les différents tests
+            for(String elm: getTests(classRoot)) {
+
+                Class<?> cls = null;
+                try {
+                    cls = classLoader.loadClass(elm);//elm.getQualifiedName());
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                clazzes.add(cls);
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
     }
+
+    private static void completeCompile() {
+
+        launcher.prettyprint();
+
+        String[]command ={"mvn","install"};
+        ProcessBuilder ps=new ProcessBuilder(command);
+        ps.redirectErrorStream(true);
+        ps.directory(dest);
+
+        Process process;
+        try {
+            process = ps.start();
+            BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            process.waitFor();
+            in.close();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+//    public static void replace(CtClass element){
+//        CtType type = element.getPosition().getCompilationUnit().getMainType();
+//        Factory factory = type.getFactory();
+//        Environment env = factory.getEnvironment();
+//
+//        JavaOutputProcessor processor = new JavaOutputProcessor(new File(directory), new DefaultJavaPrettyPrinter(env));
+//        processor.setFactory(factory);
+//
+//        processor.createJavaFile(type);
+//    }
 }

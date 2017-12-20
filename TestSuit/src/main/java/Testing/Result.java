@@ -69,7 +69,7 @@ public class Result {
 
                 total+=1;
                 System.out.println("Nombre de mutant : "+total);
-                System.out.println("Nombre de mutant tués :"+killed);
+                System.out.println("Nombre de mutant tués : "+killed);
                 System.out.println("Ratio : "+ (double) (killed/total));
             } catch (CompilerException e) {
                 e.printStackTrace();
@@ -82,7 +82,7 @@ public class Result {
     public static void closeReport(){
         out.println("<ul>");
         out.println("Nombre de mutant : "+total);
-        out.println("Nombre de mutant tués :"+killed);
+        out.println("Nombre de mutant tués : "+killed);
         out.println("Ratio : "+ (double) (killed/total));
         out.println("</ul>");
         out.close();
