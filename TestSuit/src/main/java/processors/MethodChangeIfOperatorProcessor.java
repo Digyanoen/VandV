@@ -74,11 +74,11 @@ public class MethodChangeIfOperatorProcessor extends MyProcess {
                                         }
 
                                         ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(newOp);
-                                        ctClass.replace(ctClassCloned);
+                                        //ctClass.replace(ctClassCloned);
 
                                         mutant =new Mutant(ctClass.getSimpleName(), (CtMethod) m, s, "ChangeBooleanOperator", s.getPosition().getLine());
                                         Result.showResults(mutant);
-                                        ctClassCloned.replace(ctClass);
+                                        //ctClassCloned.replace(ctClass);
                                         ctClassList.add(ctClassCloned.clone());
                                         ((CtBinaryOperator) ((CtIf) s).getCondition()).setKind(binaryOperator);
                                     }

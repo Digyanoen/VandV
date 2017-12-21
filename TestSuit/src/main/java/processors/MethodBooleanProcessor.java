@@ -1,6 +1,7 @@
 package processors;
 
 import Testing.Result;
+import Testing.TestUnitHandler;
 import spoon.processing.AbstractProcessor;
 import spoon.reflect.code.CtBlock;
 import spoon.reflect.code.CtReturn;
@@ -40,11 +41,13 @@ public class MethodBooleanProcessor extends MyProcess{
             ctClassCloned.replace(ctClass);
 
             ((CtMethod) m).setBody(returnFalse);
-            ctClass.replace(ctClassCloned);
+//            ctClass.replace(ctClassCloned);
+            TestUnitHandler.replace(ctClassCloned);
             ctClassList.add(ctClassCloned.clone());
             mutant.setStatement(returnFalse);
             Result.showResults(mutant);
-            ctClassCloned.replace(ctClass);
+//            ctClassCloned.replace(ctClass);
+            TestUnitHandler.replace(ctClass);
             ((CtMethod) m).setBody(body);
 
         });

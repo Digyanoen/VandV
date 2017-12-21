@@ -33,7 +33,7 @@ public class Main {
         //Suppression du dossier de destination et des potentiels fichiers présents
         if(dest.exists()) {
             try {
-                deleteFiles(dest);
+                TestUnitHandler.deleteFiles(dest);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -59,9 +59,13 @@ public class Main {
 
         Result.closeReport();
 
-
+        try {
+            TestUnitHandler.deleteFiles(dest);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-    @CoverageIgnore
+
     private static void initLauncher(String inDir) {
 
         //Initialise le launcher principal
@@ -79,17 +83,6 @@ public class Main {
         launcher.buildModel();
 
         TestUnitHandler.initialize(launcher);
-    }
-
-    @CoverageIgnore
-    private static void deleteFiles(File file) throws IOException {
-        File [] children = file.listFiles();
-        if(children != null) {
-            for (File child : children) {
-                deleteFiles(child);
-            }
-        }
-        if(!file.delete()) throw new IOException();
     }
 
 
