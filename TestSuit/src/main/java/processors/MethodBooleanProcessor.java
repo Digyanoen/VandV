@@ -48,13 +48,11 @@ public class MethodBooleanProcessor extends MyProcess{
             ctClassCloned.replace(ctClass);
 
             ((CtMethod) m).setBody(returnFalse);
-//            ctClass.replace(ctClassCloned);
-            TestUnitHandler.replace(ctClassCloned);
+            ctClass.replace(ctClassCloned);
             ctClassList.add(ctClassCloned.clone());
             mutant.setStatement(returnFalse);
             Result.showResults(mutant);
-//            ctClassCloned.replace(ctClass);
-            TestUnitHandler.replace(ctClass);
+            ctClassCloned.replace(ctClass);
             ((CtMethod) m).setBody(body);
 
         });
