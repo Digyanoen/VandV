@@ -19,16 +19,11 @@ public class Result {
     private static boolean initialized = false;
 
 
-<<<<<<< HEAD
     /**
      * Initialization of the report file
      * Adding a mutant, and its values to the report
      * @param m A mutant to add in the report
      */
-=======
-
-
->>>>>>> parent of b42fc60... Ajout de l'annotation @CoverageIgnore + tests pour le UnitTestHandler
     public static void showResults(Mutant m) {
         System.err.println("ShowResult");
         if(!initialized){
@@ -103,14 +98,11 @@ public class Result {
         out.println("</ul>");
         out.close();
     }
-<<<<<<< HEAD
 
     /**
      * Initialize the fields
      * Insert Javascript files into the generated report
      */
-=======
->>>>>>> parent of b42fc60... Ajout de l'annotation @CoverageIgnore + tests pour le UnitTestHandler
     private static void initialize(){
         try {
             ClassLoader classLoader = Result.class.getClassLoader();
