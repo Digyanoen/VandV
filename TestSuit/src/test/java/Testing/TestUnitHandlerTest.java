@@ -28,18 +28,7 @@ public class TestUnitHandlerTest {
     }
 
 
-    @Test
-    public void compileTest() throws Exception {
 
-        PowerMockito.spy(TestUnitHandler.class);
-        PowerMockito.doNothing().when(TestUnitHandler.class, "compile");
-
-        PowerMockito.doReturn(new ArrayList<String>()).when(TestUnitHandler.class, "getTests", Mockito.any(File.class));
-        List<Failure> fails = TestUnitHandler.getFailures();
-        PowerMockito.verifyPrivate(TestUnitHandler.class).invoke("compile");
-        Assert.assertTrue("Empty List", fails.size() == 0);
-
-    }
 
     @Test
     public void initializeWithoutClassTest() throws Exception {
@@ -58,7 +47,7 @@ public class TestUnitHandlerTest {
 
     }
 
-
+/*
     @Test
     public void initializeWithClassTest() throws Exception {
         PowerMockito.spy(TestUnitHandler.class);
@@ -68,10 +57,12 @@ public class TestUnitHandlerTest {
         PowerMockito.doReturn(dummyList).when(TestUnitHandler.class, "getTests", Mockito.any(File.class));
 
         PowerMockito.spy(URLClassLoader.class);
-        Dummy dummy = new Dummy();
 
         TestUnitHandler.initialize(new Launcher());
-    }
+
+        PowerMockito.verifyPrivate(TestUnitHandler.class).invoke("completeCompile");
+        PowerMockito.verifyPrivate(TestUnitHandler.class).invoke("getTests", Mockito.any(File.class));
+    }*/
 
 
 }

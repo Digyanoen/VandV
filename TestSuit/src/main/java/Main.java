@@ -61,6 +61,7 @@ public class Main {
 
 
     }
+
     @CoverageIgnore
     private static void initLauncher(String inDir) {
 
@@ -91,6 +92,7 @@ public class Main {
         }
         if(!file.delete()) throw new IOException();
     }
+
 
 
 }

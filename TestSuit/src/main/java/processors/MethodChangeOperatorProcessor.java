@@ -19,14 +19,6 @@ public class MethodChangeOperatorProcessor extends MyProcess{
 
     private List<CtClass> ctClassList;
 
-    /**
-     * For a given class, the processor will retrieves its methods
-     * For each method, the process look for assigment statements
-     * For each statement, the processor will change the arithmetic operator
-     * Then, the processor give the mutated class to the Result, in order to write the effects of this mutation
-     * @param ctClass
-     */
-    @Override
     public void process(CtClass ctClass) {
         ctClassList = new ArrayList<>();
         CtClass ctClassCloned = ctClass.clone();
@@ -34,7 +26,7 @@ public class MethodChangeOperatorProcessor extends MyProcess{
         ctClassCloned.getMethods().forEach(m -> {
             CtBlock methods = ((CtMethod) m).getBody();
             if(methods != null) {
-            methods.getStatements().stream().filter(ctStatement -> ctStatement instanceof CtLocalVariable)
+                methods.getStatements().stream().filter(ctStatement -> ctStatement instanceof CtLocalVariable)
                         .forEach(
                                 s -> {
                                     if (!((((CtLocalVariable) s).getAssignment()) instanceof CtBinaryOperator)) return;

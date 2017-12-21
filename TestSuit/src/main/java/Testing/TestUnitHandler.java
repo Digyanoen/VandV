@@ -1,11 +1,20 @@
 package Testing;
 
 import com.sun.org.apache.xalan.internal.xsltc.compiler.CompilerException;
+import com.sun.tools.javac.main.JavaCompiler;
+import com.sun.tools.javac.util.Context;
 import net.sourceforge.cobertura.CoverageIgnore;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.notification.Failure;
 import spoon.Launcher;
+import spoon.compiler.Environment;
+import spoon.reflect.declaration.CtClass;
+import spoon.reflect.declaration.CtType;
+import spoon.reflect.factory.Factory;
+import spoon.reflect.visitor.DefaultJavaPrettyPrinter;
+import spoon.support.JavaOutputProcessor;
 
+import javax.tools.JavaFileObject;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +31,7 @@ public class TestUnitHandler {
     private static ClassLoader classLoader;
     public static File dest = new File("dest/"); //Dossier de destination
     private static Launcher launcher;
-    private static List<Class<?>> clazzes = new ArrayList<>();
+    private static List<Class<?>> clazzes;
 
     /**
      * Récupère la liste des tests qui ont échoué
@@ -35,45 +44,13 @@ public class TestUnitHandler {
         List<Failure> result = new ArrayList<>();
 
 
-
         for (Class<?> clazz : clazzes) {
+            System.out.println("Entrée : "+clazz.getSimpleName());
             result.addAll(junit.run(clazz).getFailures());
         }
 
         return result;
     }
-
-
-    public static void initialize(Launcher l) {
-        launcher = l;//Récupère le dossier des classes de tests
-
-        completeCompile();
-
-        File classRoot = new File("dest/target/test-classes"); //TODO Confirmer le lieu de la compile Maven
-
-
-
-        //Initialise le ClassLoader
-        try {
-            classLoader = URLClassLoader.newInstance(new URL[]{classRoot.toURI().toURL()});
-            //Lance les différents tests
-            List<String> testList = getTests(classRoot);
-            for(String elm: testList) {
-
-                Class<?> cls = null;
-                try {
-                    cls = classLoader.loadClass(elm);//elm.getQualifiedName());
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-
-                clazzes.add(cls);
-            }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-    }
-
     @CoverageIgnore
     private static void compile() throws CompilerException {
         try {
@@ -148,7 +125,34 @@ public class TestUnitHandler {
     }
 
 
+    public static void initialize(Launcher l) {
+        launcher = l;//Récupère le dossier des classes de tests
 
+        completeCompile();
+
+        File classRoot = new File("dest/target/test-classes"); //TODO Confirmer le lieu de la compile Maven
+
+        clazzes = new ArrayList<>();
+
+        //Initialise le ClassLoader
+        try {
+            if (classLoader == null) classLoader = URLClassLoader.newInstance(new URL[]{classRoot.toURI().toURL()});
+            //Lance les différents tests
+            for(String elm: getTests(classRoot)) {
+
+                Class<?> cls = null;
+                try {
+                    cls = classLoader.loadClass(elm);//elm.getQualifiedName());
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                clazzes.add(cls);
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
 
     @CoverageIgnore
     private static void completeCompile() {
@@ -175,14 +179,17 @@ public class TestUnitHandler {
     public static ClassLoader getClassLoader() {
         return classLoader;
     }
+
     @CoverageIgnore
     public static void setClassLoader(ClassLoader classLoader) {
         TestUnitHandler.classLoader = classLoader;
     }
+
     @CoverageIgnore
     public static List<Class<?>> getClazzes() {
         return clazzes;
     }
+
     @CoverageIgnore
     public static void setClazzes(List<Class<?>> clazzes) {
         TestUnitHandler.clazzes = clazzes;
