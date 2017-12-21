@@ -35,37 +35,19 @@ public class TestUnitHandler {
     private static ClassLoader classLoader;
 
     /**
-     * Récupère la liste des tests qui ont échoué
+     * Compile les sources du projet cible et
+     * récupère la liste des tests qui ont échoué
      * @return La liste d'échecs
+     * @throws CompilerException La compilation a renvoyé une erreur
      */
     static List<Failure> getFailures() throws CompilerException {
 
+        //Compile le projet cible
         compile();
 
         List<Failure> result = new ArrayList<>();
 
-//        //Récupère le dossier des classes de tests
-//        File classRoot = new File("dest/target/test-classes"); //TODO Confirmer le lieu de la compile Maven
-//
-//        //Initialise le ClassLoader
-//        try {
-//            if (classLoader == null) classLoader = URLClassLoader.newInstance(new URL[]{classRoot.toURI().toURL()});
-//            //Lance les différents tests
-//            for(String elm: getTests(classRoot)) {
-//
-//                Class<?> cls = null;
-//                try {
-//                    cls = classLoader.loadClass(elm);//elm.getQualifiedName());
-//                } catch (ClassNotFoundException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                result.addAll(junit.run(cls).getFailures());
-//            }
-//        } catch (MalformedURLException e) {
-//            e.printStackTrace();
-//        }
-
+        //Lance les tests et récupère les tests échouant
         for (Class<?> clazz : clazzes) {
             result.addAll(junit.run(clazz).getFailures());
         }
@@ -73,23 +55,27 @@ public class TestUnitHandler {
         return result;
     }
 
-
+    /**
+     * Initialise TestUnitHandler
+     * @param l Launcher Spoon contenant le modèle à tester
+     */
     public static void initialize(Launcher l) {
         launcher = l;//Récupère le dossier des classes de tests
 
+        //Compile entièrement le projet cible
         completeCompile();
 
-        File classRoot = new File("dest/target/test-classes"); //TODO Confirmer le lieu de la compile Maven
+        File classRoot = new File("dest/target/test-classes"); //Condition sine qua non
 
         //Initialise le ClassLoader
         try {
             if (classLoader == null) classLoader = URLClassLoader.newInstance(new URL[]{classRoot.toURI().toURL()});
-            //Lance les différents tests
+            //Charge les différents tests
             for(String elm: getTests(classRoot)) {
 
                 Class<?> cls = null;
                 try {
-                    cls = classLoader.loadClass(elm);//elm.getQualifiedName());
+                    cls = classLoader.loadClass(elm);
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -101,15 +87,12 @@ public class TestUnitHandler {
         }
     }
 
+    /**
+     * lance la commande "mvn compile" sur le projet cible, copié dans le dossier "dest"
+     * @throws CompilerException La commande a échoué
+     */
     @CoverageIgnore
     private static void compile() throws CompilerException {
-//        try {
-//            deleteFiles(new File("dest/src/main/java"));
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
-        //launcher.prettyprint();
 
         String[]command ={"mvn","compile"};
         ProcessBuilder ps=new ProcessBuilder(command);
@@ -128,7 +111,11 @@ public class TestUnitHandler {
         }
     }
 
-
+    /**
+     * Récupère les tests sous la forme acceptée par classLoader
+     * @param classRoot Objet File pointant sur le dossier contenant les .class des tests
+     * @return La liste des noms des classes sous la forme nom.de.package.classe
+     */
     @CoverageIgnore
     private static List<String> getTests(File classRoot) {
         List<String> res = new ArrayList<>();
@@ -144,11 +131,18 @@ public class TestUnitHandler {
         return res;
     }
 
+    /**
+     * Méthode auxiliaire de getTests(File classRoot)
+     * @param dir Répertoir ou fichier courant
+     * @param pack nom du package courant
+     * @return La liste des noms des classes sous la forme nom.de.package.classe contenu dans dir
+     */
     @CoverageIgnore
     private static List<String> getTests(File dir, String pack) {
         List<String> res = new ArrayList<>();
         String name = dir.getName();
 
+        //Si dir est un répertoire, appelle la méthode sur son contenu
         if(dir.isDirectory()){
             File[] files = dir.listFiles();
             if (files != null) {
@@ -157,13 +151,18 @@ public class TestUnitHandler {
                 }
             }
         }else if(dir.isFile() && name.endsWith(".class") && !name.contains("$")){
+            //Si dir est un fichier .class génère le nom de package
             res.add(pack + name.substring(0,name.length()-6));
         }
 
         return res;
     }
 
-    @CoverageIgnore
+    /**
+     * Supprime les documents donnés en paramêtre
+     * @param file Fichier ou répertoire à supprimer
+     * @throws IOException Le fichier ou le répertoire n'a pas pu être supprimé
+     */
     public static void deleteFiles(File file) throws IOException {
         File [] children = file.listFiles();
         if(children != null) {
@@ -174,9 +173,9 @@ public class TestUnitHandler {
         if(!file.delete()) throw new IOException();
     }
 
-
-
-
+    /**
+     * Compile l'intégralité du projet cible
+     */
     @CoverageIgnore
     private static void completeCompile() {
 
@@ -198,6 +197,10 @@ public class TestUnitHandler {
         }
     }
 
+    /**
+     * Génère le fichier Spoon dans la copie du projet cible
+     * @param element Class Spoon à générer
+     */
     public static void replace(CtClass element){
         CtType type = element.getPosition().getCompilationUnit().getMainType();
         Factory factory = type.getFactory();
