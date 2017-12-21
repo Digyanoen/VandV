@@ -21,19 +21,19 @@ public class MethodVoidProcessor extends MyProcess{
         CtClass ctClassCloned = ctClass.clone();
         ctClasses.add(ctClass);
 
-        ctClassCloned.getMethods().stream().filter(m -> ((CtMethod)m).getType().getSimpleName().equals("void") )
-                .forEach(
-                        method ->
-                        {
-                            CtBlock body = ((CtMethod)method).getBody();
-                            CtBlock voidBody = ctClass.getFactory().createBlock();
-                            ((CtMethod)method).setBody(voidBody);
-                            Mutant m = new Mutant(ctClass.getSimpleName(), (CtMethod) method, voidBody, "DeleteVoidBody", ((CtMethod) method).getPosition().getLine());
-                            ctClass.replace(ctClassCloned);
-                            Result.showResults(m);
-                            ctClasses.add(ctClassCloned.clone());
-                            ((CtMethod) method).setBody(body);
-                        });
+       ctClassCloned.getMethods().stream().filter(m -> ((CtMethod)m).getType().getSimpleName().equals("void") )
+               .forEach(
+                       method ->
+                       {
+                           CtBlock body = ((CtMethod)method).getBody();
+                           CtBlock voidBody = ctClass.getFactory().createBlock();
+                           ((CtMethod)method).setBody(voidBody);
+                           Mutant m = new Mutant(ctClass.getSimpleName(), (CtMethod) method, voidBody, "DeleteVoidBody", ((CtMethod) method).getPosition().getLine());
+                           ctClass.replace(ctClassCloned);
+                           Result.showResults(m);
+                           ctClasses.add(ctClassCloned.clone());
+                           ((CtMethod) method).setBody(body);
+                       });
 
     }
 

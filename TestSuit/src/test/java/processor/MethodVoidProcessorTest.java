@@ -103,7 +103,6 @@ public class MethodVoidProcessorTest{
 
         PowerMockito.mockStatic(Result.class);
         PowerMockito.doNothing().when(Result.class);
-
         methodVoidProcessor.process(removeClass);
         for (CtClass c : methodVoidProcessor.getCtClasses()) {
             Assert.assertTrue("Body must not be null", c.getMethod("bodyNotRemovedMethod").getBody() != null);

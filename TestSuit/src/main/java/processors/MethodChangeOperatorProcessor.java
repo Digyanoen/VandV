@@ -26,7 +26,7 @@ public class MethodChangeOperatorProcessor extends MyProcess{
         ctClassCloned.getMethods().forEach(m -> {
             CtBlock methods = ((CtMethod) m).getBody();
             if(methods != null) {
-                methods.getStatements().stream().filter(ctStatement -> ctStatement instanceof CtLocalVariable)
+            methods.getStatements().stream().filter(ctStatement -> ctStatement instanceof CtLocalVariable)
                         .forEach(
                                 s -> {
                                     if (!((((CtLocalVariable) s).getAssignment()) instanceof CtBinaryOperator)) return;
