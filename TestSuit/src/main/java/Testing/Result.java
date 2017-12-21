@@ -8,6 +8,9 @@ import processors.Mutant;
 import java.io.*;
 import java.util.List;
 
+/**
+ *  Class which creates a report by retrieving information about mutants
+ */
 public class Result {
     private static double total=0;
     private static double killed = 0;
@@ -16,11 +19,16 @@ public class Result {
     private static boolean initialized = false;
 
 
-
-
+    /**
+     * Initialization of the report file
+     * Adding a mutant, and its values to the report
+     * @param m A mutant to add in the report
+     */
     public static void showResults(Mutant m) {
+        System.err.println("ShowResult");
         if(!initialized){
             initialize();
+            System.err.println("Initialized");
             initialized=true;
         }
             out.println("<table border=\"1\" cellpadding=\"10\" cellspacing=\"1\" witdh=\"100%\">");
@@ -45,6 +53,7 @@ public class Result {
             List<Failure> failureList = null;
             try {
                 failureList = TestUnitHandler.getFailures();
+                System.out.println("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
                 if (failureList.size() == 0) {
                     out.println("<td> Vivant </td>");
 
@@ -70,7 +79,7 @@ public class Result {
                 total+=1;
                 System.out.println("Nombre de mutant : "+total);
                 System.out.println("Nombre de mutant tués : "+killed);
-                System.out.println("Ratio : "+ (double) (killed/total));
+                System.out.println("Ratio : "+ killed/total);
             } catch (CompilerException e) {
                 e.printStackTrace();
             }
@@ -78,15 +87,22 @@ public class Result {
             out.flush();
     }
 
-
+    /**
+     * Close the report
+     */
     public static void closeReport(){
         out.println("<ul>");
         out.println("Nombre de mutant : "+total);
         out.println("Nombre de mutant tués : "+killed);
-        out.println("Ratio : "+ (double) (killed/total));
+        out.println("Ratio : "+ killed/total);
         out.println("</ul>");
         out.close();
     }
+
+    /**
+     * Initialize the fields
+     * Insert Javascript files into the generated report
+     */
     private static void initialize(){
         try {
             ClassLoader classLoader = Result.class.getClassLoader();
@@ -116,6 +132,9 @@ public class Result {
 
     }
 
+    /**
+     * Delete the report
+     */
     public static void deleteReport(){
         if(resume.exists()){
             resume.delete();

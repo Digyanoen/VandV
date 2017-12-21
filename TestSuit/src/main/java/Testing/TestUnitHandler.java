@@ -49,8 +49,12 @@ public class TestUnitHandler {
 
         //Lance les tests et récupère les tests échouant
         for (Class<?> clazz : clazzes) {
-            result.addAll(junit.run(clazz).getFailures());
+            System.out.println("ajout de la classe de test "+clazz.getSimpleName());
+            List<Failure> listResult = junit.run(clazz).getFailures();
+            System.out.println("failures récupérées");
+            result.addAll(listResult);
         }
+        System.out.println("return result");
 
         return result;
     }
@@ -103,8 +107,14 @@ public class TestUnitHandler {
         try {
             process = ps.start();
             BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line = in.readLine();
+            while(line != null){
+                System.out.println(line);
+                line = in.readLine();
+            }
             process.waitFor();
             in.close();
+            System.out.println("compile fini");
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
             throw new CompilerException("Fail to compile");
@@ -190,6 +200,12 @@ public class TestUnitHandler {
         try {
             process = ps.start();
             BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line = in.readLine();
+            while(line != null){
+                System.out.println(line);
+                line = in.readLine();
+            }
+
             process.waitFor();
             in.close();
         } catch (IOException | InterruptedException e) {

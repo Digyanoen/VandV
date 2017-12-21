@@ -20,6 +20,13 @@ import java.util.List;
 public class MethodBooleanProcessor extends MyProcess{
     private List<CtClass> ctClassList;
 
+    /**
+     *
+     * For a given class, the processor will retrieves its boolean methods
+     * For each method, the process replace the body by a return true then a return false statement
+     * Then, the processor give the mutated class to the Result, in order to write the effects of this mutation
+     * @param ctClass
+     */
     @Override
     public void process(CtClass ctClass) {
         ctClassList = new ArrayList<>();
