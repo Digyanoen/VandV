@@ -1,9 +1,5 @@
-package testing;
+package Testing;
 
-import Testing.Result;
-import Testing.TestUnitHandler;
-import Testing.TestUnitHandlerTest;
-import com.sun.org.apache.regexp.internal.RE;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -142,6 +138,16 @@ public class ResultTest {
         }
 
 
+        @Test
+        public void deleteReportTest() throws IOException {
+        File f = new File("report.html");
+
+        f.createNewFile();
+        Assert.assertTrue(f.exists());
+        Result.deleteReport();
+        Assert.assertTrue(!f.exists());
+
+        }
 
 
 

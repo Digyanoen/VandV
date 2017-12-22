@@ -123,7 +123,7 @@ public class TestUnitHandler {
      * @param file répertoire/fichier à supprimer
      * @throws IOException La suppresion n'a pas fonctionné
      */
-    private static void deleteFiles(File file) throws IOException {
+    public static void deleteFiles(File file) throws IOException {
         File [] children = file.listFiles();
         if(children != null) {
             for (File child : children) {

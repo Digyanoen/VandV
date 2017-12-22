@@ -32,7 +32,7 @@ public class Main {
         //Suppression du dossier de destination et des potentiels fichiers présents
         if(dest.exists()) {
             try {
-                deleteFiles(dest);
+                TestUnitHandler.deleteFiles(dest);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -81,15 +81,6 @@ public class Main {
     }
 
 
-    private static void deleteFiles(File file) throws IOException {
-        File [] children = file.listFiles();
-        if(children != null) {
-            for (File child : children) {
-                deleteFiles(child);
-            }
-        }
-        if(!file.delete()) throw new IOException();
-    }
 
 
 
