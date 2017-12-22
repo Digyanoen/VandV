@@ -8,6 +8,9 @@ import processors.Mutant;
 import java.io.*;
 import java.util.List;
 
+/**
+ *  Class which creates a report by retrieving information about mutants
+ */
 public class Result {
     private static double total=0;
     private static double killed = 0;
@@ -17,7 +20,11 @@ public class Result {
 
 
 
-
+    /**
+     * Initialization of the report file
+     * Adding a mutant, and its values to the report
+     * @param m A mutant to add in the report
+     */
     public static void showResults(Mutant m) {
         if(!initialized){
             initialize();
@@ -87,6 +94,11 @@ public class Result {
         out.println("</ul>");
         out.close();
     }
+
+    /**
+     * Initialize the fields
+     * Insert Javascript files into the generated report
+     */
     private static void initialize(){
         try {
             ClassLoader classLoader = Result.class.getClassLoader();
@@ -116,6 +128,9 @@ public class Result {
 
     }
 
+    /**
+     * Delete the report
+     */
     public static void deleteReport(){
         if(resume.exists()){
             resume.delete();

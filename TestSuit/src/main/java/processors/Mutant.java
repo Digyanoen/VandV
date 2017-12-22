@@ -3,6 +3,9 @@ package processors;
 import spoon.reflect.code.CtStatement;
 import spoon.reflect.declaration.CtMethod;
 
+/**
+ * A POJO which permits to store information about a mutant
+ */
 public class Mutant {
 
     private String className;

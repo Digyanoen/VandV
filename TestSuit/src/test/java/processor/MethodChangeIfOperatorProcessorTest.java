@@ -30,7 +30,9 @@ public class MethodChangeIfOperatorProcessorTest extends AbstractTest{
 
     public BinaryOperatorKind[][] binaryOperatorKind;
 
-
+    /**
+     * Set up the binary operators
+     */
     @Before
     public void init() {
         this.process = new MethodChangeIfOperatorProcessor();
@@ -46,7 +48,9 @@ public class MethodChangeIfOperatorProcessorTest extends AbstractTest{
 
     }
 
-
+    /**
+     * Create a class and process over it
+     */
     @Test
     public void MethodChangeOperatorTest() {
         CtClass changeAnd = new CtClassImpl();
@@ -83,7 +87,7 @@ public class MethodChangeIfOperatorProcessorTest extends AbstractTest{
             int j = 0;
             condition.setKind(binaryOperatorKind[i][0]);
             ctIf.setCondition(condition);
-            ((MethodChangeIfOperatorProcessor) process).process(changeAnd);
+            process.process(changeAnd);
             List<CtClass> ctClassList = process.getCtClasses();
 
 

@@ -7,8 +7,14 @@ import spoon.reflect.declaration.CtClass;
 
 import java.util.List;
 
+/**
+ * Abstract class for processors
+ */
 public abstract class MyProcess extends AbstractProcessor<CtClass> {
+    /**
+     *
+     * @return the list of the modified class
+     */
     public abstract List<CtClass> getCtClasses();
-    public static Result result = new Result();
 
 }

@@ -17,6 +17,14 @@ public class MethodChangeIfOperatorProcessor extends MyProcess {
 
     private List<CtClass> ctClassList;
 
+    /**
+     * For a given class, the processor will retrieves its methods
+     * For each method, the process look for if statements
+     * For each if statement, the processor will change the boolean operator
+     * Then, the processor give the mutated class to the Result, in order to write the effects of this mutation
+     * @param ctClass, the class to process
+     */
+    @Override
     public void process(CtClass ctClass) {
         ctClassList = new ArrayList<>();
         CtClass ctClassCloned = ctClass.clone();

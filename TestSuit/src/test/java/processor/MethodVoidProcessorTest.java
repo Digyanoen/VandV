@@ -84,6 +84,9 @@ public class MethodVoidProcessorTest{
 
     }
 
+    /**
+     * Process on a class with void methods
+     */
     @Test
     public void removeBodyTest(){
 
@@ -98,6 +101,9 @@ public class MethodVoidProcessorTest{
 
     }
 
+    /**
+     * Test the processor on a not void method
+     */
     @Test
     public void bodyNotRemovedTest() {
 

@@ -14,6 +14,10 @@ import spoon.support.reflect.reference.CtTypeReferenceImpl;
 public abstract class AbstractTest {
 
     protected MyProcess process;
+
+    /**
+     * Test the behaviour of an interface or an abstract class
+     */
     @Test
     public void methodNullTest(){
         CtClass ctClass = new CtClassImpl();

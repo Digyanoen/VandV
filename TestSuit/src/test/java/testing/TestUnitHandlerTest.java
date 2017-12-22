@@ -16,7 +16,10 @@ import java.util.ArrayList;
 @PrepareForTest(TestUnitHandler.class)
 public class TestUnitHandlerTest {
 
-
+    /**
+     * Test the TestUnitHandler
+     * @throws Exception
+     */
     @Test
     public void initializeWithoutClassTest() throws Exception {
 

@@ -15,6 +15,14 @@ import java.util.List;
 public class MethodVoidProcessor extends MyProcess{
 
     private List <CtClass> ctClasses;
+
+    /**
+     *
+     * For a given class, the processor will retrieves its void methods
+     * For each method, the process delete the body
+     * Then, the processor give the mutated class to the Result, in order to write the effects of this mutation
+     * @param ctClass
+     */
     @Override
     public void process(CtClass ctClass) {
         ctClasses = new ArrayList<>();

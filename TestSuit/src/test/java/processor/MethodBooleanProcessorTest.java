@@ -68,9 +68,10 @@ public class MethodBooleanProcessorTest {
         booleanClass.addTypeMember(booleanMethod);
     }
 
-    
 
-
+    /**
+     * Test the Boolean processor
+     */
     @Test
     public void processBooleanTest(){
         PowerMockito.mockStatic(Result.class);

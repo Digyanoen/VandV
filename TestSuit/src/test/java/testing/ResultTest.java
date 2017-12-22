@@ -32,6 +32,9 @@ public class ResultTest {
 
     }
 
+    /**
+     * Set up the data
+     */
     @Before
     public void setUp(){
         CtMethod ctMethod = new CtMethodImpl();
@@ -44,6 +47,10 @@ public class ResultTest {
     }
 
 
+    /**
+     * Test if the generated report matches with the expected values
+     * @throws Exception
+     */
     @Test
     public void printOutWithFailureTest() throws Exception {
 

@@ -29,7 +29,9 @@ public class MethodChangeOperatorProcessorTest extends AbstractTest{
 
     public BinaryOperatorKind[][] binaryOperatorKind;
 
-
+    /**
+     * Set up artihmetic operators
+     */
     @Before
     public void init() {
         process = new MethodChangeOperatorProcessor();
@@ -45,6 +47,9 @@ public class MethodChangeOperatorProcessorTest extends AbstractTest{
     }
 
 
+    /**
+     * Create a class and process over it
+     */
     @Test
     public void MethodChangeOperatorOpTest() {
         CtClass changeOp = new CtClassImpl();
@@ -93,6 +98,9 @@ public class MethodChangeOperatorProcessorTest extends AbstractTest{
         }
     }
 
+    /**
+     * Create a class with an assigment operator and process over it
+     */
     @Test
     public void MethodChangeUnaryTest() {
         CtClass changeOp = new CtClassImpl();
