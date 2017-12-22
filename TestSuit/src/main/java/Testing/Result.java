@@ -121,4 +121,12 @@ public class Result {
             resume.delete();
         }
     }
+
+    public static PrintWriter getOut() {
+        return out;
+    }
+
+    public static void setOut(PrintWriter out) {
+        Result.out = out;
+    }
 }

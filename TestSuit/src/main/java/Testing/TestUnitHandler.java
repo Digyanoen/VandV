@@ -14,6 +14,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class TestUnitHandler {
 
@@ -34,8 +35,10 @@ public class TestUnitHandler {
 
         List<Failure> result = new ArrayList<>();
 
+
+
         for (Class<?> clazz : clazzes) {
-	    System.out.println("Entrée : "+clazz.getSimpleName());
+	    Logger.getGlobal().info("Chargement de la classe : "+clazz.getSimpleName());
             result.addAll(junit.run(clazz).getFailures());
         }
 
@@ -135,6 +138,8 @@ public class TestUnitHandler {
      * @param l Launcher Spoon contenant le modèle du projet cible.
      */
     public static void initialize(Launcher l) {
+
+        Logger.getGlobal().info("Initialisation du launcher");
         launcher = l;//Récupère le dossier des classes de tests
 
         completeCompile();
@@ -184,5 +189,22 @@ public class TestUnitHandler {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+
+    public static ClassLoader getClassLoader() {
+        return classLoader;
+    }
+
+    public static void setClassLoader(ClassLoader classLoader) {
+        TestUnitHandler.classLoader = classLoader;
+    }
+
+    public static List<Class<?>> getClazzes() {
+        return clazzes;
+    }
+
+    public static void setClazzes(List<Class<?>> clazzes) {
+        TestUnitHandler.clazzes = clazzes;
     }
 }

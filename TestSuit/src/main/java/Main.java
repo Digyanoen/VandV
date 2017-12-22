@@ -8,6 +8,7 @@ import processors.MethodVoidProcessor;
 import spoon.Launcher;
 
 import java.io.*;
+import java.util.logging.Logger;
 
 public class Main {
 
@@ -52,6 +53,7 @@ public class Main {
         launcher.addProcessor(new MethodChangeIfOperatorProcessor());
         launcher.addProcessor(new MethodVoidProcessor());
 
+        Logger.getGlobal().info("Lancement des mutations");
         launcher.process();
 
         Result.closeReport();
@@ -78,6 +80,7 @@ public class Main {
         TestUnitHandler.initialize(launcher);
     }
 
+
     private static void deleteFiles(File file) throws IOException {
         File [] children = file.listFiles();
         if(children != null) {
@@ -87,5 +90,7 @@ public class Main {
         }
         if(!file.delete()) throw new IOException();
     }
+
+
 
 }
