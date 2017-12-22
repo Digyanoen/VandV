@@ -53,56 +53,6 @@ public class Main {
         launcher.addProcessor(new MethodVoidProcessor());
 
         launcher.process();
-//
-//        List<CtMethod> meth = root.getElements(new TypeFilter<CtMethod>(CtMethod.class));
-//
-//        //list all classes of the model
-//        for(CtMethod m : meth) {
-//            System.out.println("method: "+m.getSimpleName());
-//        }
-//
-//        List<CtClass> clazzes = root.getElements(new TypeFilter<CtClass>(CtClass.class){
-//            @Override
-//            public boolean matches(CtClass element) {
-//                return super.matches(element) && !tests.contains(element);
-//            }
-//        });
-//
-//        //list all classes of the model
-//        for(CtClass c : clazzes) {
-//            System.out.println("class: "+c.getQualifiedName());
-//        }
-
-        // Launch a mutator
-//        MethodChangeOperatorProcessor classProc = new MethodChangeOperatorProcessor();
-//        clazzes.stream().forEach(m -> {
-//                    classProc.process(m);
-//                }
-//
-//
-//        );
-//        // Launch a mutator
-//        MethodChangeIfOperatorProcessor classProc2 = new MethodChangeIfOperatorProcessor();
-//        clazzes.stream().forEach(m -> {
-//                    classProc2.process(m);
-//                }
-//
-//
-//        );
-//        MethodBooleanProcessor classProc3 = new MethodBooleanProcessor();
-//        clazzes.stream().forEach(m -> {
-//                    classProc3.process(m);
-//                }
-//
-//
-//        );
-//        MethodVoidProcessor classProc4 = new MethodVoidProcessor();
-//        clazzes.stream().forEach(m -> {
-//                    classProc4.process(m);
-//                }
-//
-//
-//        );
 
         Result.closeReport();
 
@@ -127,15 +77,6 @@ public class Main {
 
         TestUnitHandler.initialize(launcher);
     }
-//
-//    private static void printLines(String name, InputStream ins) throws Exception {
-//        String line = null;
-//        BufferedReader in = new BufferedReader(
-//                new InputStreamReader(ins));
-//        while ((line = in.readLine()) != null) {
-//            System.out.println(name + " " + line);
-//        }
-//    }
 
     private static void deleteFiles(File file) throws IOException {
         File [] children = file.listFiles();
@@ -146,23 +87,5 @@ public class Main {
         }
         if(!file.delete()) throw new IOException();
     }
-
-
-
-//    @Test
-//    public void testGoodTestClassNames() throws Exception {
-//        SpoonAPI spoon = new Launcher();
-//        spoon.addInputResource("src/test/java/");
-//        spoon.buildModel();
-//
-//        for (CtMethod<?> meth : spoon.getModel().getRootPackage().getElements(new TypeFilter<CtMethod>(CtMethod.class) {
-//            @Override
-//            public boolean matches(CtMethod element) {
-//                return super.matches(element) && element.getAnnotation(Test.class) != null;
-//            }
-//        })) {
-//            assertTrue("naming contract violated for "+meth.getParent(CtClass.class).getSimpleName(), meth.getParent(CtClass.class).getSimpleName().startsWith("Test") || meth.getParent(CtClass.class).getSimpleName().endsWith("Test"));
-//        }
-//    }
 
 }
