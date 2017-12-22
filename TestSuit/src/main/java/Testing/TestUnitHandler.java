@@ -38,7 +38,7 @@ public class TestUnitHandler {
 
 
         for (Class<?> clazz : clazzes) {
-	    Logger.getGlobal().info("Chargement de la classe : "+clazz.getSimpleName());
+	    //Logger.getGlobal().info("Chargement de la classe : "+clazz.getSimpleName());
             result.addAll(junit.run(clazz).getFailures());
         }
 
