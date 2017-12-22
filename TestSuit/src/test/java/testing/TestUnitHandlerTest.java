@@ -16,12 +16,6 @@ import java.util.ArrayList;
 @PrepareForTest(TestUnitHandler.class)
 public class TestUnitHandlerTest {
 
-    public class Dummy{
-
-    }
-
-
-
 
     @Test
     public void initializeWithoutClassTest() throws Exception {
