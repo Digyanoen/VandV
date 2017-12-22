@@ -23,6 +23,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class TestUnitHandler {
 
@@ -42,30 +43,10 @@ public class TestUnitHandler {
 
         List<Failure> result = new ArrayList<>();
 
-//        //Récupère le dossier des classes de tests
-//        File classRoot = new File("dest/target/test-classes"); //TODO Confirmer le lieu de la compile Maven
-//
-//        //Initialise le ClassLoader
-//        try {
-//            if (classLoader == null) classLoader = URLClassLoader.newInstance(new URL[]{classRoot.toURI().toURL()});
-//            //Lance les différents tests
-//            for(String elm: getTests(classRoot)) {
-//
-//                Class<?> cls = null;
-//                try {
-//                    cls = classLoader.loadClass(elm);//elm.getQualifiedName());
-//                } catch (ClassNotFoundException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                result.addAll(junit.run(cls).getFailures());
-//            }
-//        } catch (MalformedURLException e) {
-//            e.printStackTrace();
-//        }
+
 
         for (Class<?> clazz : clazzes) {
-	    System.out.println("Entrée : "+clazz.getSimpleName());
+	    Logger.getGlobal().info("Chargement de la classe : "+clazz.getSimpleName());
             result.addAll(junit.run(clazz).getFailures());
         }
 
@@ -98,33 +79,6 @@ public class TestUnitHandler {
         }
     }
 
-//    public static void removeJunkTest() throws CompilerException {
-//
-//        for (CtMethod ignored : launcher.getModel().getElements(new TypeFilter<CtMethod>(CtMethod.class) {
-//            @Override
-//            public boolean matches(CtMethod element) {
-//                return super.matches(element) && (element.getAnnotation(Ignore.class) != null);
-//            }
-//        })) {
-//            ((CtType) ignored.getParent()).removeMethod(ignored);
-//        }
-//
-//        List<Failure> methodsToJunk = getFailures();
-//
-//        //TODO Améliorer la suppression des tests
-//        //Lance les différents tests et supprime les tests échouant
-//        //Pour chaque classe de test
-//        for(CtType elm: tests) {
-//
-//            //Pour chaque échec supprime le test du modèle
-//            for (Failure junk : methodsToJunk) {
-//                System.out.println(junk.getDescription().getClassName());
-//                if(junk.getDescription().getClassName().equals(elm.getQualifiedName())) { //TODO Vérifier le cas des classes de même nom
-//                    elm.removeMethod(elm.getMethod(junk.getDescription().getMethodName()));
-//                }
-//            }
-//        }
-//    }
 
 
     private static List<String> getTests(File classRoot) {
@@ -171,6 +125,8 @@ public class TestUnitHandler {
 
 
     public static void initialize(Launcher l) {
+
+        Logger.getGlobal().info("Initialisation du launcher");
         launcher = l;//Récupère le dossier des classes de tests
 
         completeCompile();
@@ -219,14 +175,20 @@ public class TestUnitHandler {
         }
     }
 
-//    public static void replace(CtClass element){
-//        CtType type = element.getPosition().getCompilationUnit().getMainType();
-//        Factory factory = type.getFactory();
-//        Environment env = factory.getEnvironment();
-//
-//        JavaOutputProcessor processor = new JavaOutputProcessor(new File(directory), new DefaultJavaPrettyPrinter(env));
-//        processor.setFactory(factory);
-//
-//        processor.createJavaFile(type);
-//    }
+
+    public static ClassLoader getClassLoader() {
+        return classLoader;
+    }
+
+    public static void setClassLoader(ClassLoader classLoader) {
+        TestUnitHandler.classLoader = classLoader;
+    }
+
+    public static List<Class<?>> getClazzes() {
+        return clazzes;
+    }
+
+    public static void setClazzes(List<Class<?>> clazzes) {
+        TestUnitHandler.clazzes = clazzes;
+    }
 }
